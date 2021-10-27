@@ -1,9 +1,8 @@
 import pygame
-
-from state import GameState
-from settings import Settings
-from gui import GUI
 from event_handler import EventHandler
+from gui import GUI
+from settings import Settings
+from state import GameState
 
 
 class Game:
@@ -44,5 +43,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as err:
-        print(f'Error: {err}')
+        print(f"Error: {err}")
         raise err

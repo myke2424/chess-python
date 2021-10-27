@@ -1,5 +1,5 @@
-from state import GameState
 from move import Move
+from state import GameState
 
 
 class EventHandler:
@@ -35,8 +35,11 @@ class EventHandler:
 
         # If the user has clicked two squares (starting square and destination square), make the move
         if self.player_clicks == 2:
-            move = Move(starting_square=self.first_click_location, destination_square=self.second_click_location,
-                        board=self.state.board)
+            move = Move(
+                starting_square=self.first_click_location,
+                destination_square=self.second_click_location,
+                board=self.state.board,
+            )
 
             self.state.make_move(move)
             self._reset_clicks()

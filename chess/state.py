@@ -15,14 +15,14 @@ class GameState:
         """
 
         self.board = [
-            ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR'],
-            ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'],
-            ['**', '**', '**', '**', '**', '**', '**', '**'],
-            ['**', '**', '**', '**', '**', '**', '**', '**'],
-            ['**', '**', '**', '**', '**', '**', '**', '**'],
-            ['**', '**', '**', '**', '**', '**', '**', '**'],
-            ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'],
-            ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR']
+            ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
+            ["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"],
+            ["**", "**", "**", "**", "**", "**", "**", "**"],
+            ["**", "**", "**", "**", "**", "**", "**", "**"],
+            ["**", "**", "**", "**", "**", "**", "**", "**"],
+            ["**", "**", "**", "**", "**", "**", "**", "**"],
+            ["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"],
+            ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"],
         ]
         self.move_log = []
         self.white_to_move = True
@@ -41,4 +41,4 @@ class GameState:
 
     def _make_square_empty(self, row: int, col: int) -> None:
         """ Render the square empty on the given row/col"""
-        self.board[row][col] = '**'
+        self.board[row][col] = "**"

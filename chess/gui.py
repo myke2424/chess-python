@@ -1,8 +1,8 @@
-import pygame
 import os
-
-from settings import Settings
 from typing import List
+
+import pygame
+from settings import Settings
 
 
 class GUI:
@@ -39,7 +39,7 @@ class GUI:
         piece = self.board[row][col]
         # TODO: Refactor to an enum?
         # If the piece isn't an empty square ('**' signifies an empty square)
-        if piece != '**':
+        if piece != "**":
             square = pygame.Rect(col * self.square_size, row * self.square_size, self.square_size, self.square_size)
             # 'blit' draws the image on the screen on the given square
             self.screen.blit(self.piece_images[piece], square)
@@ -63,8 +63,8 @@ class GUI:
         images = os.listdir(image_dir)
 
         for image_path in images:
-            piece = image_path.split('.')[0]  # get the filename without ext
-            loaded_piece_image = self._load_and_scale_image(image_path=f"{image_dir}/{image_path}",
-                                                            width=self.square_size,
-                                                            height=self.square_size)
+            piece = image_path.split(".")[0]  # get the filename without ext
+            loaded_piece_image = self._load_and_scale_image(
+                image_path=f"{image_dir}/{image_path}", width=self.square_size, height=self.square_size
+            )
             self.piece_images[piece] = loaded_piece_image

@@ -2,7 +2,7 @@ from typing import List
 
 
 class Move:
-    """ Abstraction that represents a player move """
+    """ Abstraction that represents all the data in a player move """
 
     def __init__(self, starting_square: tuple, destination_square: tuple, board: List[List[str]]):
         self.start_row = starting_square[0]
