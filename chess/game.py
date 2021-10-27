@@ -1,6 +1,8 @@
 """" Responsible for user input and displaying the current GameState """
 
 from engine import GameState
+from settings import Settings
+from typing import List
 import pygame
 import os
 
@@ -9,6 +11,54 @@ DIMENSION = 8
 SQUARE_SIZE = HEIGHT // DIMENSION
 MAX_FPS = 15
 IMAGES = {}
+
+
+class Game:
+    def __init__(self):
+        pass
+
+
+class GUI:
+    """ Responsible for drawing the GUI """
+
+    def __init__(self, settings: Settings, board: List[list[str]]):
+        self.settings = settings
+        self.board = board
+        self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
+
+    def draw(self):
+        self._draw_board()
+        self._draw_pieces()
+
+    def load_images(self) -> None:
+        pieces = ['bP', 'bR', 'bN', 'bB', 'bQ', 'bK', 'wP', 'wR', 'wN', 'wB', 'wQ', 'wK']
+        for piece in pieces:
+            IMAGES[piece] = pygame.transform.scale(pygame.image.load(os.path.abspath(f'../images/{piece}.png')),
+                                                   (SQUARE_SIZE, SQUARE_SIZE))
+
+    def _draw_square(self, row: int, col: int) -> None:
+        color = self.settings.colors[((row + col) % 2)]
+        square = pygame.Rect(left=col * self.settings.SQUARE_SIZE, top=row * self.settings.SQUARE_SIZE,
+                             width=self.settings.SQUARE_SIZE, height=self.settings.SQUARE_SIZE)
+        pygame.draw.rect(surface=self.screen, color=color, rect=square)
+
+    def _draw_board(self) -> None:
+        for row in range(self.settings.DIMENSION):
+            for col in range(self.settings.DIMENSION):
+                self._draw_square(row=row, col=col)
+
+    def _draw_piece(self, row: int, col: int) -> None:
+        piece = self.board[row][col]
+        # not empty
+        if piece != "--":
+            self.screen.blit(IMAGES[piece],
+                             pygame.Rect(col * self.settings.SQUARE_SIZE, row * self.settings.SQUARE_SIZE,
+                                         self.settings.SQUARE_SIZE, self.settings.SQUARE_SIZE))
+
+    def _draw_pieces(self) -> None:
+        for row in range(self.settings.DIMENSION):
+            for col in range(self.settings.DIMENSION):
+                self._draw_piece()
 
 
 def load_images():
@@ -21,11 +71,12 @@ def load_images():
 # Responsible for all graphics with current game state.
 def draw_game_state(screen, gamestate):
     draw_board(screen)
-    draw_pieces(screen, gamestate.board)
+   # draw_pieces(screen, gamestate.board)
 
 
 def draw_board(screen):
-    colors = [pygame.Color('white'), pygame.Color('gray')]
+    """ drawing column by row, col * squaresize"""
+    colors = [pygame.Color('white'), pygame.Color('blue')]
     for r in range(DIMENSION):
         for c in range(DIMENSION):
             color = colors[((r + c) % 2)]
@@ -71,10 +122,10 @@ class Move:
 def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    clock = pygame.time.Clock()
-    screen.fill((pygame.Color("white")))
+  #  clock = pygame.time.Clock()
+  #  screen.fill((pygame.Color("white")))
     gs = GameState()
-    load_images()  # load images
+  #  load_images()  # load images
     running = True
     square_selected = ()  # no square selected, keep track of last click of the user
     player_clicks = []  # keep track of player clicks (two tuples)
@@ -104,7 +155,7 @@ def main():
                     player_clicks = []
 
         draw_game_state(screen, gs)
-        clock.tick(MAX_FPS)
+       # clock.tick(MAX_FPS)
         pygame.display.flip()
 
 
