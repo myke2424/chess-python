@@ -33,6 +33,10 @@ class EventHandler:
 
         self.player_clicks += 1
 
+        # Reset clicks if user is trying to move a piece on the same square
+        if self.first_click_location == self.second_click_location:
+            self._reset_clicks()
+
         # If the user has clicked two squares (starting square and destination square), make the move
         if self.player_clicks == 2:
             move = Move(

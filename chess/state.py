@@ -31,6 +31,7 @@ class GameState:
         # TODO: Print unicode chess board
         return str(self.board)
 
+    # TODO: Update it to work with pawn promotion/en passant
     def make_move(self, move: Move) -> None:
         """ Move a piece on the chess board """
         # Makes original spot empty since we're moving the piece
@@ -38,6 +39,14 @@ class GameState:
         self.board[move.dest_row][move.dest_col] = move.piece_to_move  # Move the piece
         self.move_log.append(move)
         self.white_to_move = False
+
+    def undo_move(self):
+        """ Undo the previous move """
+        if not self.move_log:
+            return
+        previous_move = self.move_log.pop()
+        self.board[previous_move.start_row][previous_move.start_col] = previous_move.piece_to_move
+        self.board[previous_move.dest_row][previous_move.dest_col] = previous_move.piece_to_capture
 
     def _make_square_empty(self, row: int, col: int) -> None:
         """ Render the square empty on the given row/col"""

@@ -30,6 +30,11 @@ class Game:
 
                     self.event_handler.click_square(row, col)
 
+                elif e.type == pygame.KEYDOWN:
+                    # press u for undo move
+                    if e.key == ord('u'):
+                        self.state.undo_move()
+
             self.gui.draw()
             pygame.display.flip()
 
