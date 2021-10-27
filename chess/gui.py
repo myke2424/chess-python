@@ -63,7 +63,7 @@ class GUI:
         images = os.listdir(image_dir)
 
         for image_path in images:
-            piece = image_path.split('.')[0]
+            piece = image_path.split('.')[0]  # get the filename without ext
             loaded_piece_image = self._load_and_scale_image(image_path=f"{image_dir}/{image_path}",
                                                             width=self.square_size,
                                                             height=self.square_size)
