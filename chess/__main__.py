@@ -1,6 +1,6 @@
-import pygame
 import logging
 
+import pygame
 from event_handler import EventHandler
 from gui import GUI
 from settings import Settings
@@ -54,5 +54,4 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as err:
-        print(f"Error: {err}")
         raise err

@@ -1,8 +1,9 @@
 from collections import namedtuple
+
 from move import Move
 from state import GameState
 
-Square = namedtuple('Square', 'row col')
+Square = namedtuple("Square", "row col")
 
 
 class EventHandler:
@@ -57,9 +58,9 @@ class EventHandler:
         :param key: Unicode representation of the key
         """
         # Press 'u' to undo your last move
-        if key == ord('u'):
+        if key == ord("u"):
             self.state.undo_move()
-        elif key == ord('r'):
+        elif key == ord("r"):
             self.state.redo_move()
 
     def _reset_clicks(self) -> None:

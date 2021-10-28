@@ -17,10 +17,11 @@ class Move:
         starting_square_notation = _ChessNotationParser.from_row_and_col(row=self.start_row, col=self.start_col)
         destination_square_notation = _ChessNotationParser.from_row_and_col(row=self.dest_row, col=self.dest_col)
 
+        print(self.dest_row, self.dest_col)
         return starting_square_notation + destination_square_notation
 
     @classmethod
-    def from_chess_notation(cls, starting_square: str, destination_square: str, board: List[List[str]]) -> 'Move':
+    def from_chess_notation(cls, starting_square: str, destination_square: str, board: List[List[str]]) -> "Move":
         """ Alternate constructor to create a move obj from standard chess notation """
         pass
 
@@ -31,6 +32,7 @@ class _ChessNotationParser:
     On a chess board, columns are called FILES (vertical)
     A square is represented by the FILE character then RANK number
     """
+
     rows_to_ranks = {7: "1", 6: "2", 5: "3", 4: "4", 3: "5", 2: "6", 1: "7", 0: "8"}
     columns_to_files = {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", 5: "f", 6: "g", 7: "h"}
 

@@ -1,4 +1,13 @@
+from collections import namedtuple
+
 from move import Move
+
+from chess import (
+    BLACKS_STARTING_KINGS_ROW,
+    BLACKS_STARTING_PAWN_ROW,
+    WHITES_STARTING_KINGS_ROW,
+    WHITES_STARTING_PAWN_ROW,
+)
 
 
 class GameState:
@@ -7,23 +16,24 @@ class GameState:
     Update state (make moves), record move log, keep track of who's got the piece advantage etc."
     """
 
+    EMPTY_SQUARE = "**"
+
     def __init__(self):
         """
-        board: 8x8 matrix. Each cell has two characters, first char represents the color of the piece,
-        second char represents the type. e.g. 'bK' = black king.
-        '**' represents empty squares. Each cell has a corresponding image with the same name.
+        board: 8x8 matrix with starting chess pieces for black/white. '**' represents empty squares.
         """
 
         self.board = [
-            ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
-            ["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"],
-            ["**", "**", "**", "**", "**", "**", "**", "**"],
-            ["**", "**", "**", "**", "**", "**", "**", "**"],
-            ["**", "**", "**", "**", "**", "**", "**", "**"],
-            ["**", "**", "**", "**", "**", "**", "**", "**"],
-            ["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"],
-            ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"],
+            [*BLACKS_STARTING_KINGS_ROW],
+            [*BLACKS_STARTING_PAWN_ROW],
+            [self.EMPTY_SQUARE for _ in range(8)],
+            [self.EMPTY_SQUARE for _ in range(8)],
+            [self.EMPTY_SQUARE for _ in range(8)],
+            [self.EMPTY_SQUARE for _ in range(8)],
+            [*WHITES_STARTING_PAWN_ROW],
+            [*WHITES_STARTING_KINGS_ROW],
         ]
+
         self.move_log = []
         self.white_turn = True
 
@@ -58,4 +68,4 @@ class GameState:
 
     def _make_square_empty(self, row: int, col: int) -> None:
         """ Render the square empty on the given row/col"""
-        self.board[row][col] = "**"
+        self.board[row][col] = self.EMPTY_SQUARE

@@ -1,12 +1,10 @@
+import logging
 import os
 import sys
-
 from typing import List
 
 import pygame
 from settings import Settings
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +12,7 @@ logger = logging.getLogger(__name__)
 class GUI:
     """ Responsible for drawing the GUI (board, pieces, highlighting etc) """
 
-    def __init__(self, settings: Settings, board: List[List[int]]):
+    def __init__(self, settings: Settings, board: List[List[str]]):
         self.board = board
         self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
         self.square_size = settings.SQUARE_SIZE
@@ -48,7 +46,7 @@ class GUI:
         if piece != "**":
             square = pygame.Rect(col * self.square_size, row * self.square_size, self.square_size, self.square_size)
             # 'blit' draws the image on the screen on the given square
-            self.screen.blit(self.piece_images[piece], square)
+            self.screen.blit(self.piece_images[piece.name], square)
 
     def _draw_pieces(self) -> None:
         """ Draw all the pieces on the chess board """
