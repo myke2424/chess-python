@@ -1,5 +1,8 @@
+from collections import namedtuple
 from move import Move
 from state import GameState
+
+Square = namedtuple('Square', 'row col')
 
 
 class EventHandler:
@@ -24,7 +27,7 @@ class EventHandler:
         :param col: Column of the square clicked
         :return:
         """
-        square_clicked = (row, col)
+        square_clicked = Square(row, col)
 
         if self.first_click_location is None:
             self.first_click_location = square_clicked
@@ -47,6 +50,17 @@ class EventHandler:
 
             self.state.make_move(move)
             self._reset_clicks()
+
+    def press_key(self, key: int) -> None:
+        """
+        handler for when keys are pressed.
+        :param key: Unicode representation of the key
+        """
+        # Press 'u' to undo your last move
+        if key == ord('u'):
+            self.state.undo_move()
+        elif key == ord('r'):
+            self.state.redo_move()
 
     def _reset_clicks(self) -> None:
         """ After the player makes their move, reset the player clicks/square clicked """

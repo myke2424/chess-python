@@ -1,8 +1,14 @@
 import pygame
+import logging
+
 from event_handler import EventHandler
 from gui import GUI
 from settings import Settings
 from state import GameState
+
+# TODO: add decent logging
+logging.basicConfig(level=logging.WARNING)
+logger = logging.getLogger(__name__)
 
 
 class Game:
@@ -31,9 +37,7 @@ class Game:
                     self.event_handler.click_square(row, col)
 
                 elif e.type == pygame.KEYDOWN:
-                    # press u for undo move
-                    if e.key == ord('u'):
-                        self.state.undo_move()
+                    self.event_handler.press_key(key=e.key)
 
             self.gui.draw()
             pygame.display.flip()

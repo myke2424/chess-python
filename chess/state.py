@@ -25,7 +25,7 @@ class GameState:
             ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"],
         ]
         self.move_log = []
-        self.white_to_move = True
+        self.white_turn = True
 
     def __repr__(self) -> str:
         # TODO: Print unicode chess board
@@ -37,8 +37,12 @@ class GameState:
         # Makes original spot empty since we're moving the piece
         self._make_square_empty(row=move.start_row, col=move.start_col)
         self.board[move.dest_row][move.dest_col] = move.piece_to_move  # Move the piece
+
+        print(move)
         self.move_log.append(move)
-        self.white_to_move = False
+        self.white_turn = False
+
+        # Print the move!
 
     def undo_move(self):
         """ Undo the previous move """
@@ -47,6 +51,10 @@ class GameState:
         previous_move = self.move_log.pop()
         self.board[previous_move.start_row][previous_move.start_col] = previous_move.piece_to_move
         self.board[previous_move.dest_row][previous_move.dest_col] = previous_move.piece_to_capture
+        # Switch turn back since we undo'd a move.
+
+    def redo_move(self):
+        pass
 
     def _make_square_empty(self, row: int, col: int) -> None:
         """ Render the square empty on the given row/col"""
