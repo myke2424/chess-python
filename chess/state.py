@@ -1,5 +1,3 @@
-from collections import namedtuple
-
 from move import Move
 
 from chess import (

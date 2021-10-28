@@ -1,7 +1,4 @@
-from collections import namedtuple
-
-# TODO: Fix circular dep issue with square
-Square = namedtuple("Square", "row col")
+from square import Square
 
 
 class Piece:

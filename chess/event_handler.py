@@ -2,9 +2,7 @@ from collections import namedtuple
 
 from move import Move
 from state import GameState
-
-Square = namedtuple("Square", "row col")
-
+from square import Square
 
 class EventHandler:
     """ Responsible for handling player inputs (events) """
