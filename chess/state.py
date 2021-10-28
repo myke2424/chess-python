@@ -51,7 +51,7 @@ class GameState:
         previous_move = self.move_log.pop()
         self.board[previous_move.start_row][previous_move.start_col] = previous_move.piece_to_move
         self.board[previous_move.dest_row][previous_move.dest_col] = previous_move.piece_to_capture
-        # Switch turn back since we undo'd a move.
+        # TODO: Switch turn back since we undo'd a move.
 
     def redo_move(self):
         pass

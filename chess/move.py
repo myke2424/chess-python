@@ -14,18 +14,13 @@ class Move:
 
     def __repr__(self) -> str:
         """ Printable representation of a move made in chess notation """
-        color = self.piece_to_move[0]
-        piece_type = self.piece_to_move[1]
+        starting_square_notation = _ChessNotationParser.from_row_and_col(row=self.start_row, col=self.start_col)
+        destination_square_notation = _ChessNotationParser.from_row_and_col(row=self.dest_row, col=self.dest_col)
 
-        # Bottom left of the board = Row 7, Col 0
-        # Bottom right of board = Row 7, Col 7
-        # Top left of board = Row 0, Col, 0
-        # Top right of the board = Row 0, Col 7
-
-        return _ChessNotationParser.get_chess_notation_from_row_and_col(row=self.dest_row, col=self.dest_col)
+        return starting_square_notation + destination_square_notation
 
     @classmethod
-    def from_chess_notation(cls, starting_square: tuple, destination_square: tuple, board: List[List[str]]) -> 'Move':
+    def from_chess_notation(cls, starting_square: str, destination_square: str, board: List[List[str]]) -> 'Move':
         """ Alternate constructor to create a move obj from standard chess notation """
         pass
 
@@ -40,7 +35,7 @@ class _ChessNotationParser:
     columns_to_files = {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", 5: "f", 6: "g", 7: "h"}
 
     @classmethod
-    def get_chess_notation_from_row_and_col(cls, row: int, col: int) -> str:
+    def from_row_and_col(cls, row: int, col: int) -> str:
         """
         Given a row/col, return its position on the board in standard chess notation
         e.g. row=7 col=0 -> a1

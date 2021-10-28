@@ -24,12 +24,14 @@ class Game:
     def start(self) -> None:
         """ Main interface used to start the game of chess """
         pygame.init()
+        logger.debug("Game started")
 
         while self.running:
             for e in pygame.event.get():
                 if e.type == pygame.QUIT:
                     self.running = False
                 elif e.type == pygame.MOUSEBUTTONDOWN:
+                    # TODO: Move this logic into the event handler
                     location = pygame.mouse.get_pos()  # (x,y) location of mouse
                     col = location[0] // self.settings.SQUARE_SIZE
                     row = location[1] // self.settings.SQUARE_SIZE

@@ -1,8 +1,14 @@
 import os
+import sys
+
 from typing import List
 
 import pygame
 from settings import Settings
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class GUI:
@@ -59,7 +65,9 @@ class GUI:
         """ Load all the piece images into self.peace_images dict. """
 
         if not os.path.exists(image_dir):
-            print(f"Image path {image_dir} isn't valid")
+            logger.error(f"Image path: '{image_dir}' doesnt exist. Failed to load images. Exiting")
+            sys.exit(1)
+
         images = os.listdir(image_dir)
 
         for image_path in images:
