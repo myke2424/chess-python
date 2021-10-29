@@ -1,11 +1,13 @@
 from typing import List
+
 from chess_notation import ChessNotationParser
+from square import Square
 
 
 class Move:
     """ Abstraction that represents all the data in a player move. """
 
-    def __init__(self, starting_square: tuple, destination_square: tuple, board: List[List[str]]):
+    def __init__(self, starting_square: Square, destination_square: Square, board: List[List[str]]):
         self.start_row = starting_square.row
         self.start_col = starting_square.col
         self.dest_row = destination_square.row
@@ -20,7 +22,7 @@ class Move:
 
         return starting_square_notation + destination_square_notation
 
-    def __eq__(self, other: 'Move') -> bool:
+    def __eq__(self, other: "Move") -> bool:
         """ Checks if two moves are the same """
         if isinstance(other, Move):
             return self.piece_to_move == other.piece_to_move and self.piece_to_capture == other.piece_to_capture

@@ -1,8 +1,9 @@
 from collections import namedtuple
 
 from move import Move
-from state import GameState
 from square import Square
+from state import GameState
+
 
 class EventHandler:
     """ Responsible for handling player inputs (events) """
