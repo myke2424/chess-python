@@ -1,7 +1,5 @@
 from piece import Bishop, King, Knight, Pawn, Queen, Rook
 
-EMPTY_SQUARE = "**"
-
 BLACKS_STARTING_KINGS_ROW = [
     Rook(color="b", row=0, col=0),
     Knight(color="b", row=0, col=1),

@@ -7,7 +7,7 @@ from settings import Settings
 from state import GameState
 
 # TODO: add decent logging
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
@@ -51,7 +51,4 @@ def main():
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as err:
-        raise err
+    main()

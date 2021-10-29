@@ -4,9 +4,8 @@ import sys
 from typing import List
 
 import pygame
+from constants import EMPTY_SQUARE
 from settings import Settings
-
-from chess import EMPTY_SQUARE
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +43,6 @@ class GUI:
         """ Draw the piece on the given square (row/col) """
         piece = self.board[row][col]
         # TODO: Refactor to an enum?
-        # If the piece isn't an empty square ('**' signifies an empty square)
         if piece != EMPTY_SQUARE:
             square = pygame.Rect(col * self.square_size, row * self.square_size, self.square_size, self.square_size)
             # 'blit' draws the image on the screen on the given square (piece.name has a 1-to-1 mapping to an img name)

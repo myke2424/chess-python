@@ -1,10 +1,13 @@
+import copy
+from typing import List
+
+from constants import EMPTY_SQUARE
 from move import Move
-from piece import Piece
+from piece import Color, Piece
 from square import Square
 
 from chess import (BLACKS_STARTING_KINGS_ROW, BLACKS_STARTING_PAWN_ROW,
-                   EMPTY_SQUARE, WHITES_STARTING_KINGS_ROW,
-                   WHITES_STARTING_PAWN_ROW)
+                   WHITES_STARTING_KINGS_ROW, WHITES_STARTING_PAWN_ROW)
 
 
 class GameState:
@@ -18,17 +21,7 @@ class GameState:
         board: 8x8 matrix with starting chess pieces for black/white. '**' represents empty squares.
         """
 
-        self.board = [
-            [*BLACKS_STARTING_KINGS_ROW],
-            [*BLACKS_STARTING_PAWN_ROW],
-            [EMPTY_SQUARE for _ in range(8)],
-            [EMPTY_SQUARE for _ in range(8)],
-            [EMPTY_SQUARE for _ in range(8)],
-            [EMPTY_SQUARE for _ in range(8)],
-            [*WHITES_STARTING_PAWN_ROW],
-            [*WHITES_STARTING_KINGS_ROW],
-        ]
-
+        self.board = self.initial_board_state()
         self.move_log = []
         self.white_turn = True
 
@@ -40,6 +33,25 @@ class GameState:
     def __len__(self) -> str:
         """ Return the total time elapsed in the game """
         pass
+
+    @staticmethod
+    def initial_board_state() -> List[List[str]]:
+        board = [
+            [*BLACKS_STARTING_KINGS_ROW],
+            [*BLACKS_STARTING_PAWN_ROW],
+            [EMPTY_SQUARE for _ in range(8)],
+            [EMPTY_SQUARE for _ in range(8)],
+            [EMPTY_SQUARE for _ in range(8)],
+            [EMPTY_SQUARE for _ in range(8)],
+            [*WHITES_STARTING_PAWN_ROW],
+            [*WHITES_STARTING_KINGS_ROW],
+        ]
+
+        return copy.deepcopy(board)
+
+    @property
+    def turn(self) -> str:
+        return "Whites turn" if self.white_turn else "Blacks Turn"
 
     # TODO: Update it to work with pawn promotion/en passant
     def make_move(self, move: Move) -> None:
@@ -56,11 +68,10 @@ class GameState:
 
         self._make_square_empty(row=move.start_row, col=move.start_col)
         self.board[move.dest_row][move.dest_col] = piece  # Move the piece
-        piece.update_position(destination_square=Square(row=move.dest_row, col=move.dest_col))
+        piece.pos = Square(row=move.dest_row, col=move.dest_col)
         piece.moves_made += 1
 
-        print(piece.pos)
-
+        print(move.dest_row, move.dest_col)
         print(move)
         self.move_log.append(move)
         self.white_turn = not self.white_turn
@@ -77,16 +88,35 @@ class GameState:
     def redo_move(self) -> None:
         pass
 
+    def reset_game(self) -> None:
+        print("Reset Game")
+        self.board = self.initial_board_state()
+        self.move_log.clear()
+        self.white_turn = True
+
     # If the user makes a move, and the game state changes, we should regenerate all moves
     # In order to validate the move of a black, you need to generate all of whites possible moves.
     # Make the move, generate all possible moves the opposing player, see if any of the moves attack your king
     # If your king is safe, it is a valid move, and add it to the list, return list of valid moves
     def get_valid_moves(self):
         """ All moves considering check """
-        all_moves = self.get_all_possible_moves()
-        return all_moves
+        valid_moves = []
+        all_possible_moves = self.get_all_possible_moves()
 
-    def get_all_possible_moves(self):
+        # Get whites valid moves
+        if self.white_turn:
+            for m in all_possible_moves:
+                if m.piece_to_move.color == Color.WHITE:
+                    valid_moves.append(m)
+        else:
+            for m in all_possible_moves:
+                if m.piece_to_move.color == Color.BLACK:
+                    valid_moves.append(m)
+            # all_possible_moves = filter(lambda m: m.color == Color.BLACK, all_possible_moves)
+
+        return valid_moves
+
+    def get_all_possible_moves(self) -> List[Move]:
         """
         All moves without considering check
         Iterate over the entire board evaluating all pieces for the current player

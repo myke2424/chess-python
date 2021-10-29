@@ -61,6 +61,10 @@ class EventHandler:
             self.state.undo_move()
         elif key == ord("r"):
             self.state.redo_move()
+        elif key == ord("t"):
+            print(self.state.turn)
+        elif key == ord("z"):
+            self.state.reset_game()
 
     def _reset_clicks(self) -> None:
         """ After the player makes their move, reset the player clicks/square clicked """
