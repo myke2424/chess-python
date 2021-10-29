@@ -1,4 +1,5 @@
 from move import Move
+from piece import Piece, Bishop, King, Knight, Pawn, Queen, Rook, Color
 
 from chess import (
     BLACKS_STARTING_KINGS_ROW,
@@ -36,8 +37,13 @@ class GameState:
         self.white_turn = True
 
     def __repr__(self) -> str:
+        """ Current chess board state represented in unicode """
         # TODO: Print unicode chess board
         return str(self.board)
+
+    def __len__(self) -> str:
+        """ Return the total time elapsed in the game """
+        pass
 
     # TODO: Update it to work with pawn promotion/en passant
     def make_move(self, move: Move) -> None:
@@ -48,7 +54,7 @@ class GameState:
 
         print(move)
         self.move_log.append(move)
-        self.white_turn = False
+        self.white_turn = not self.white_turn
 
         # Print the move!
 
