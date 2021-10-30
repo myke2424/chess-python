@@ -1,5 +1,6 @@
 import copy
 from typing import List, Union
+import logging
 
 from constants import EMPTY_SQUARE
 from move import Move
@@ -15,6 +16,7 @@ from chess import (
 
 # str is an empty square
 Board = List[List[Union[Piece, str]]]
+logger = logging.getLogger(__name__)
 
 
 class GameState:
@@ -74,6 +76,8 @@ class GameState:
 
         if move in valid_moves:
             self._update_board_state(move=move)
+        else:
+            logger.debug(f"{move} isn't a valid move. Please make a valid move")
 
     def _update_board_state(self, move: Move) -> None:
         """ Update the boards state based on the move """
@@ -85,7 +89,7 @@ class GameState:
         piece.pos = Square(row=move.dest_row, col=move.dest_col)
         piece.moves_made += 1
 
-        print(f"Making move: {move}")
+        logger.debug(f"Move made:{move}")
         self.move_log.append(move)
         self.white_turn = not self.white_turn
 
@@ -102,7 +106,7 @@ class GameState:
         pass
 
     def reset_game(self) -> None:
-        print("Reset Game")
+        logger.debug("Reset Game")
         self.board = self.initial_board_state()
         self.move_log.clear()
         self.white_turn = True

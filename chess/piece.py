@@ -59,6 +59,7 @@ class Pawn(Piece):
     def __init__(self, color: str, row: int, col: int):
         super().__init__(color=color, row=row, col=col)
 
+    # TODO: Add pawn promotion
     def possible_moves(self, board) -> List[Move]:
         """
         Get all the pawn moves for its current position on the board.
@@ -152,6 +153,10 @@ class Rook(Piece):
         super().__init__(color=color, row=row, col=col)
 
     def possible_moves(self, board) -> List[Move]:
+        """
+        Rooks can move left-right-up-down any amount of squares as long as pieces aren't in the way
+        A rook can potentially move up to 7 squares (in four directions)
+        """
         return []
 
 

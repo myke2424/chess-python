@@ -3,6 +3,10 @@ from collections import namedtuple
 from move import Move
 from square import Square
 from state import GameState
+from chess_notation import ChessNotationParser
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class EventHandler:
@@ -28,6 +32,7 @@ class EventHandler:
         :return:
         """
         square_clicked = Square(row, col)
+        logger.debug(f"Player Clicked: {square_clicked} '{ChessNotationParser.from_row_and_col(row, col)}'")
 
         if self.first_click_location is None:
             self.first_click_location = square_clicked

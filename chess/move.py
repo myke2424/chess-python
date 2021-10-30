@@ -21,16 +21,16 @@ class Move:
         starting_square_notation = ChessNotationParser.from_row_and_col(row=self.start_row, col=self.start_col)
         destination_square_notation = ChessNotationParser.from_row_and_col(row=self.dest_row, col=self.dest_col)
 
-        return starting_square_notation + destination_square_notation
+        return f"Move({self.piece_to_move} {starting_square_notation}->{destination_square_notation})"
 
     def __eq__(self, other: "Move") -> bool:
         """ Checks if two moves are the same """
         if isinstance(other, Move):
             if (
-                self.start_row == other.start_row
-                and self.dest_row == other.dest_row
-                and self.start_col == other.start_col
-                and self.dest_col == other.dest_col
+                    self.start_row == other.start_row
+                    and self.dest_row == other.dest_row
+                    and self.start_col == other.start_col
+                    and self.dest_col == other.dest_col
             ):
                 return True
         return False

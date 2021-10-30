@@ -6,7 +6,6 @@ from gui import GUI
 from settings import Settings
 from state import GameState
 
-# TODO: add decent logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -43,6 +42,8 @@ class Game:
 
             self.gui.draw()
             pygame.display.flip()
+
+        logger.debug("Game ended")
 
 
 def main():
