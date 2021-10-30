@@ -86,13 +86,13 @@ class Pawn(Piece):
                 two_square_advance = Move(start_square=self.pos, dest_square=Square(two_square_up, col), board=board)
                 moves.append(two_square_advance)
 
-            # Check if were in bounds (going left won't push us off the board)
-            if col - 1 >= 0:
-                self.capture(board=board, piece_to_capture=board[one_square_up][col - 1], moves=moves)
+        # Check if were in bounds (going left won't push us off the board)
+        if col - 1 >= 0:
+            self.capture(board=board, piece_to_capture=board[one_square_up][col - 1], moves=moves)
 
-            # Check if were in bounds (going right won't push us off the board)
-            if col + 1 <= 7:
-                self.capture(board=board, piece_to_capture=board[one_square_up][col + 1], moves=moves)
+        # Check if were in bounds (going right won't push us off the board)
+        if col + 1 <= 7:
+            self.capture(board=board, piece_to_capture=board[one_square_up][col + 1], moves=moves)
 
         return moves
 
