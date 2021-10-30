@@ -80,7 +80,7 @@ class EventHandler:
         elif key == ord("z"):
             self.state.reset_game()
         elif key == ord("s"):
-            pass
+            logger.debug(self.state.score)
         elif key == ord("v"):
             logger.debug(f"Valid Moves for {self.state.turn}")
             for move in self.state.get_valid_moves():

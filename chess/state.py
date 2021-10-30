@@ -1,7 +1,10 @@
 import copy
 import logging
 from typing import List
+from functools import reduce
+from itertools import chain
 
+from piece import Piece
 from move import Move
 from utils import EMPTY_SQUARE, Board, Color, Square
 
@@ -56,14 +59,33 @@ class GameState:
 
     @property
     def turn(self) -> str:
+        """ Who's turn is it? """
         return "Whites turn" if self.white_turn else "Blacks Turn"
 
-    @classmethod
-    def is_square_empty(cls, row: int, col: int) -> bool:
-        """ Checks if the square (row/col) is empty """
-        if cls.board[row][col] == EMPTY_SQUARE:
-            return True
-        return False
+    @property
+    def all_pieces(self) -> List[Piece]:
+        """ Return a 1D list containing all active pieces on the board"""
+        board = copy.deepcopy(self.board)
+        flattened_board = list(chain.from_iterable(board))
+        return list(filter(lambda p: isinstance(p, Piece), flattened_board))  # filter out empty squares
+
+    @property
+    def score(self) -> str:
+        """ Who has the piece advantage? """
+        white_pieces = list(filter(lambda p: p.color == Color.WHITE, self.all_pieces))
+        black_pieces = list(filter(lambda p: p.color == Color.BLACK, self.all_pieces))
+
+        # total values with a reducer
+        white_score = reduce(lambda a, b: a + b, [p.value for p in white_pieces])
+        black_score = reduce(lambda a, b: a + b, [p.value for p in black_pieces])
+
+        if white_score > black_score:
+            return f"Whites winning with a piece advantage of ({white_score - black_score})"
+
+        elif white_score < black_score:
+            return f"Blacks winning with a piece advantage of ({black_score - white_score})"
+
+        return "No player has a piece advantage, the game is even"
 
     # TODO: Update it to work with pawn promotion/en passant
     def make_move(self, move: Move) -> None:
@@ -148,3 +170,10 @@ class GameState:
     def _make_square_empty(self, row: int, col: int) -> None:
         """ Render the square empty on the given row/col"""
         self.board[row][col] = EMPTY_SQUARE
+
+    @classmethod
+    def is_square_empty(cls, row: int, col: int) -> bool:
+        """ Checks if the square (row/col) is empty """
+        if cls.board[row][col] == EMPTY_SQUARE:
+            return True
+        return False
