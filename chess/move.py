@@ -1,13 +1,11 @@
-from typing import List
-
 from chess_notation import ChessNotationParser
-from square import Square
+from utils import Board, Color, Square
 
 
 class Move:
     """ Abstraction that represents all the data in a player move. """
 
-    def __init__(self, start_square: Square, dest_square: Square, board: List[List[str]]):
+    def __init__(self, start_square: Square, dest_square: Square, board: Board):
         self.start_row = start_square.row
         self.start_col = start_square.col
         self.dest_row = dest_square.row
@@ -35,7 +33,17 @@ class Move:
                 return True
         return False
 
+    def is_pawn_promotion(self) -> bool:
+        """ Checks if the move is a pawn promotion for black or white """
+        if self.maker == Color.WHITE and self.piece_to_move.value == 1 and self.dest_row == 0:
+            return True
+
+        elif self.maker == Color.BLACK and self.piece_to_move.value == 1 and self.dest_row == 7:
+            return True
+
+        return False
+
     @classmethod
-    def from_chess_notation(cls, starting_square: str, destination_square: str, board: List[List[str]]) -> "Move":
+    def from_chess_notation(cls, starting_square: str, destination_square: str, board: Board) -> "Move":
         """ Alternate constructor to create a move obj from standard chess notation """
         pass
