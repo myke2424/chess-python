@@ -75,6 +75,7 @@ class Pawn(Piece):
 
         return moves
 
+    # TODO: black/white same function except black goes down, white goes up, refactor into one.
     def _possible_moves_for_white(self, board) -> List[Move]:
         """ All possible moves for white, white pawns move UP the board """
         moves = []
@@ -113,61 +114,15 @@ class Pawn(Piece):
                 two_square_advance = Move(start_square=self.pos, dest_square=Square(row + 2, col), board=board)
                 moves.append(two_square_advance)
 
-            # # Check if were in bounds (going left won't push us off the board)
-            # if col - 1 >= 0:
-            #     self.capture(board=board, piece_to_capture=board[row - 1][col - 1], moves=moves)
-            #
-            # # Check if were in bounds (going right won't push us off the board)
-            # if col + 1 <= 7:
-            #     self.capture(board=board, piece_to_capture=board[row - 1][col + 1], moves=moves)
+            # Check if were in bounds (going left won't push us off the board)
+            if col - 1 >= 0:
+                self.capture(board=board, piece_to_capture=board[row + 1][col - 1], moves=moves)
+
+            # Check if were in bounds (going right won't push us off the board)
+            if col + 1 <= 7:
+                self.capture(board=board, piece_to_capture=board[row + 1][col + 1], moves=moves)
 
         return moves
-        #     # Since
-        #     # we're white, check the square above us and see if its empty
-        #     if board[self.pos.row - 1][self.pos.col] == EMPTY_SQUARE:  # 1 square pawn advance
-        #         square_to_land_on = Square(row=self.pos.row - 1, col=self.pos.col)
-        #         move = Move(starting_square=self.pos, destination_square=square_to_land_on, board=board)
-        #         moves.append(move)
-        #
-        #         # Check if the second square above is free (2 square pawn advance)
-        #         if self.moves_made == 0 and board[self.pos.row - 2][self.pos.col] == EMPTY_SQUARE:
-        #             square_to_land_on = Square(row=self.pos.row - 2, col=self.pos.col)
-        #             move = Move(starting_square=self.pos, destination_square=square_to_land_on, board=board)
-        #             moves.append(move)
-        #
-        #     # Check if were in bounds (to the left wouldnt push us off the board), so we can move diagonally to the left to capture
-        #     if self.pos.col - 1 >= 0:
-        #         # Check if there is a black piece on the square we want to capture diagonally to the left
-        #         piece_to_capture_left_diag = board[self.pos.row - 1][self.pos.col - 1]
-        #         # Theres a black piece we can capture to the left diag
-        #         if isinstance(piece_to_capture_left_diag, Piece) and piece_to_capture_left_diag.color == Color.BLACK:
-        #             square_to_land_on = Square(row=self.pos.row - 1, col=self.pos.col - 1)
-        #             move = Move(starting_square=self.pos, destination_square=square_to_land_on, board=board)
-        #             moves.append(move)
-        # #
-        #     # In bounds
-        # if self.pos.col + 1 <= 7:
-        #     piece_to_capture_right_diag = board[self.pos.row - 1][self.pos.col + 1]
-        #     # Theres a piece we can capture right diag
-        #     if isinstance(piece_to_capture_right_diag, Piece) and piece_to_capture_right_diag.color == Color.BLACK:
-        #         square_to_land_on = Square(row=self.pos.row - 1, col=self.pos.col + 1)
-        #         move = Move(starting_square=self.pos, destination_square=square_to_land_on, board=board)
-        #         moves.append(move)
-
-    #
-    # elif self.color == Color.BLACK:
-    # # Since we're black, check the square below us
-    # if board[self.pos.row + 1][self.pos.col] == EMPTY_SQUARE:  # 1 square pawn advance
-    #     square_to_land_on = Square(row=self.pos.row + 1, col=self.pos.col)
-    #     move = Move(starting_square=self.pos, destination_square=square_to_land_on, board=board)
-    #     moves.append(move)
-    #
-    #     # Check if the second square above is free (2 square pawn advance)
-    #     if self.moves_made == 0 and board[self.pos.row + 2][self.pos.col] == EMPTY_SQUARE:
-    #         square_to_land_on = Square(row=self.pos.row + 2, col=self.pos.col)
-    #         move = Move(starting_square=self.pos, destination_square=square_to_land_on, board=board)
-    #         moves.append(move)
-    #
 
 
 class Bishop(Piece):
