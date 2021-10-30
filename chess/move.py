@@ -7,13 +7,14 @@ from square import Square
 class Move:
     """ Abstraction that represents all the data in a player move. """
 
-    def __init__(self, starting_square: Square, destination_square: Square, board: List[List[str]]):
-        self.start_row = starting_square.row
-        self.start_col = starting_square.col
-        self.dest_row = destination_square.row
-        self.dest_col = destination_square.col
+    def __init__(self, start_square: Square, dest_square: Square, board: List[List[str]]):
+        self.start_row = start_square.row
+        self.start_col = start_square.col
+        self.dest_row = dest_square.row
+        self.dest_col = dest_square.col
         self.piece_to_move = board[self.start_row][self.start_col]
         self.piece_to_capture = board[self.dest_row][self.dest_col]  # This can be an empty square
+        self.maker = self.piece_to_move.color if hasattr(self.piece_to_move, "color") else None
 
     def __repr__(self) -> str:
         """ Printable representation of a move made in chess notation """
@@ -25,7 +26,13 @@ class Move:
     def __eq__(self, other: "Move") -> bool:
         """ Checks if two moves are the same """
         if isinstance(other, Move):
-            return self.piece_to_move == other.piece_to_move and self.piece_to_capture == other.piece_to_capture
+            if (
+                self.start_row == other.start_row
+                and self.dest_row == other.dest_row
+                and self.start_col == other.start_col
+                and self.dest_col == other.dest_col
+            ):
+                return True
         return False
 
     @classmethod

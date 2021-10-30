@@ -1,13 +1,20 @@
 import copy
-from typing import List
+from typing import List, Union
 
 from constants import EMPTY_SQUARE
 from move import Move
 from piece import Color, Piece
 from square import Square
 
-from chess import (BLACKS_STARTING_KINGS_ROW, BLACKS_STARTING_PAWN_ROW,
-                   WHITES_STARTING_KINGS_ROW, WHITES_STARTING_PAWN_ROW)
+from chess import (
+    BLACKS_STARTING_KINGS_ROW,
+    BLACKS_STARTING_PAWN_ROW,
+    WHITES_STARTING_KINGS_ROW,
+    WHITES_STARTING_PAWN_ROW,
+)
+
+# str is an empty square
+Board = List[List[Union[Piece, str]]]
 
 
 class GameState:
@@ -35,7 +42,7 @@ class GameState:
         pass
 
     @staticmethod
-    def initial_board_state() -> List[List[str]]:
+    def initial_board_state() -> Board:
         board = [
             [*BLACKS_STARTING_KINGS_ROW],
             [*BLACKS_STARTING_PAWN_ROW],
@@ -53,10 +60,17 @@ class GameState:
     def turn(self) -> str:
         return "Whites turn" if self.white_turn else "Blacks Turn"
 
+    @classmethod
+    def is_square_empty(cls, row: int, col: int) -> bool:
+        """ Checks if the square (row/col) is empty """
+        if cls.board[row][col] == EMPTY_SQUARE:
+            return True
+        return False
+
     # TODO: Update it to work with pawn promotion/en passant
     def make_move(self, move: Move) -> None:
         """ Move a piece on the chess board """
-        valid_moves = self.get_valid_moves()
+        valid_moves = self._get_valid_moves()
 
         if move in valid_moves:
             self._update_board_state(move=move)
@@ -71,8 +85,7 @@ class GameState:
         piece.pos = Square(row=move.dest_row, col=move.dest_col)
         piece.moves_made += 1
 
-        print(move.dest_row, move.dest_col)
-        print(move)
+        print(f"Making move: {move}")
         self.move_log.append(move)
         self.white_turn = not self.white_turn
 
@@ -98,25 +111,19 @@ class GameState:
     # In order to validate the move of a black, you need to generate all of whites possible moves.
     # Make the move, generate all possible moves the opposing player, see if any of the moves attack your king
     # If your king is safe, it is a valid move, and add it to the list, return list of valid moves
-    def get_valid_moves(self):
+
+    def _get_valid_moves(self):
         """ All moves considering check """
         valid_moves = []
-        all_possible_moves = self.get_all_possible_moves()
 
-        # Get whites valid moves
         if self.white_turn:
-            for m in all_possible_moves:
-                if m.piece_to_move.color == Color.WHITE:
-                    valid_moves.append(m)
+            valid_moves.extend(self._get_all_possible_moves_for_color(Color.WHITE))
         else:
-            for m in all_possible_moves:
-                if m.piece_to_move.color == Color.BLACK:
-                    valid_moves.append(m)
-            # all_possible_moves = filter(lambda m: m.color == Color.BLACK, all_possible_moves)
+            valid_moves.extend(self._get_all_possible_moves_for_color(Color.BLACK))
 
         return valid_moves
 
-    def get_all_possible_moves(self) -> List[Move]:
+    def _get_all_possible_moves(self) -> List[Move]:
         """
         All moves without considering check
         Iterate over the entire board evaluating all pieces for the current player
@@ -130,6 +137,10 @@ class GameState:
                     moves.extend(piece.possible_moves(board=self.board))
 
         return moves
+
+    def _get_all_possible_moves_for_color(self, color: Color) -> List[Move]:
+        """ Get all possible moves for the given color (white or black) """
+        return list(filter(lambda m: m.maker == color, self._get_all_possible_moves()))
 
     def _make_square_empty(self, row: int, col: int) -> None:
         """ Render the square empty on the given row/col"""
