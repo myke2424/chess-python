@@ -1,10 +1,10 @@
-from collections import namedtuple
+import logging
 
+from chess_notation import ChessNotationParser
 from move import Move
 from square import Square
 from state import GameState
-from chess_notation import ChessNotationParser
-import logging
+from constants import EMPTY_SQUARE
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class EventHandler:
         self.first_click_location = None
         self.second_click_location = None
 
-    def click_square(self, row: int, col: int) -> None:
+    def left_click_square(self, row: int, col: int) -> None:
         """
         Mouse click handler when a square on the board is clicked.
         :param row: Row of the square clicked.
@@ -56,6 +56,16 @@ class EventHandler:
             self.state.make_move(move)
             self._reset_clicks()
 
+    def right_click_square(self, row: int, col: int) -> None:
+        """ Return the state of the square when right clicked (Shows the piece on it / if its empty) """
+        clicked = self.state.board[row][col]
+
+        chess_notation = ChessNotationParser.from_row_and_col(row, col)
+        if clicked == EMPTY_SQUARE:
+            logger.debug(f"{chess_notation} = EMPTY SQUARE")
+        else:
+            logger.debug(f"{chess_notation} = {clicked} {clicked.pos_chess_notation}")
+
     def press_key(self, key: int) -> None:
         """
         handler for when keys are pressed.
@@ -67,9 +77,13 @@ class EventHandler:
         elif key == ord("r"):
             self.state.redo_move()
         elif key == ord("t"):
-            print(self.state.turn)
+            logger.debug(self.state.turn)
         elif key == ord("z"):
             self.state.reset_game()
+        elif key == ord("v"):
+            logger.debug(f"Valid Moves for {self.state.turn}")
+            for move in self.state.get_valid_moves():
+                logger.debug(move)
 
     def _reset_clicks(self) -> None:
         """ After the player makes their move, reset the player clicks/square clicked """

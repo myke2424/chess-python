@@ -1,18 +1,14 @@
 import copy
-from typing import List, Union
 import logging
+from typing import List, Union
 
 from constants import EMPTY_SQUARE
 from move import Move
 from piece import Color, Piece
 from square import Square
 
-from chess import (
-    BLACKS_STARTING_KINGS_ROW,
-    BLACKS_STARTING_PAWN_ROW,
-    WHITES_STARTING_KINGS_ROW,
-    WHITES_STARTING_PAWN_ROW,
-)
+from chess import (BLACKS_STARTING_KINGS_ROW, BLACKS_STARTING_PAWN_ROW,
+                   WHITES_STARTING_KINGS_ROW, WHITES_STARTING_PAWN_ROW)
 
 # str is an empty square
 Board = List[List[Union[Piece, str]]]
@@ -72,8 +68,7 @@ class GameState:
     # TODO: Update it to work with pawn promotion/en passant
     def make_move(self, move: Move) -> None:
         """ Move a piece on the chess board """
-        valid_moves = self._get_valid_moves()
-
+        valid_moves = self.get_valid_moves()
         if move in valid_moves:
             self._update_board_state(move=move)
         else:
@@ -116,7 +111,7 @@ class GameState:
     # Make the move, generate all possible moves the opposing player, see if any of the moves attack your king
     # If your king is safe, it is a valid move, and add it to the list, return list of valid moves
 
-    def _get_valid_moves(self):
+    def get_valid_moves(self) -> List[Move]:
         """ All moves considering check """
         valid_moves = []
 

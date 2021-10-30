@@ -1,13 +1,16 @@
+import uuid
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from enum import Enum
 from typing import List, Optional
-import uuid
+import logging
 
 from chess_notation import ChessNotationParser
 from constants import EMPTY_SQUARE
 from move import Move
 from square import Square
+
+logger = logging.getLogger(__name__)
 
 
 class Color(Enum):
@@ -68,60 +71,28 @@ class Pawn(Piece):
         Pawns Capture Diagonally
         """
         moves = []
-
-        if self.color == Color.WHITE:
-            moves.extend(self._possible_moves_for_white(board=board))
-        else:
-            moves.extend(self._possible_moves_for_black(board=board))
-
-        return moves
-
-    # TODO: black/white same function except black goes down, white goes up, refactor into one.
-    def _possible_moves_for_white(self, board) -> List[Move]:
-        """ All possible moves for white, white pawns move UP the board """
-        moves = []
         row, col = self.pos.row, self.pos.col
 
-        if board[row - 1][col] == EMPTY_SQUARE:
-            one_square_advance = Move(start_square=self.pos, dest_square=Square(row - 1, col), board=board)
+        # TODO: Better way to do this?
+        one_square_up = row - 1 if self.color == Color.WHITE else row + 1
+        two_square_up = row - 2 if self.color == Color.WHITE else row + 2
+
+        if board[one_square_up][col] == EMPTY_SQUARE:
+            one_square_advance = Move(start_square=self.pos, dest_square=Square(one_square_up, col), board=board)
             moves.append(one_square_advance)
 
             # 2 square pawn advance if it hasn't moved already
-            if self.moves_made == 0 and board[row - 2][col] == EMPTY_SQUARE:
-                two_square_advance = Move(start_square=self.pos, dest_square=Square(row - 2, col), board=board)
+            if self.moves_made == 0 and board[two_square_up][col] == EMPTY_SQUARE:
+                two_square_advance = Move(start_square=self.pos, dest_square=Square(two_square_up, col), board=board)
                 moves.append(two_square_advance)
 
             # Check if were in bounds (going left won't push us off the board)
             if col - 1 >= 0:
-                self.capture(board=board, piece_to_capture=board[row - 1][col - 1], moves=moves)
+                self.capture(board=board, piece_to_capture=board[one_square_up][col - 1], moves=moves)
 
             # Check if were in bounds (going right won't push us off the board)
             if col + 1 <= 7:
-                self.capture(board=board, piece_to_capture=board[row - 1][col + 1], moves=moves)
-
-        return moves
-
-    def _possible_moves_for_black(self, board) -> List[Move]:
-        """ All possible moves for black, black pawns move DOWN the board """
-        moves = []
-        row, col = self.pos.row, self.pos.col
-
-        if board[row + 1][col] == EMPTY_SQUARE:
-            one_square_advance = Move(start_square=self.pos, dest_square=Square(row + 1, col), board=board)
-            moves.append(one_square_advance)
-
-            # 2 square pawn advance if it hasn't moved already
-            if self.moves_made == 0 and board[row + 2][col] == EMPTY_SQUARE:
-                two_square_advance = Move(start_square=self.pos, dest_square=Square(row + 2, col), board=board)
-                moves.append(two_square_advance)
-
-            # Check if were in bounds (going left won't push us off the board)
-            if col - 1 >= 0:
-                self.capture(board=board, piece_to_capture=board[row + 1][col - 1], moves=moves)
-
-            # Check if were in bounds (going right won't push us off the board)
-            if col + 1 <= 7:
-                self.capture(board=board, piece_to_capture=board[row + 1][col + 1], moves=moves)
+                self.capture(board=board, piece_to_capture=board[one_square_up][col + 1], moves=moves)
 
         return moves
 

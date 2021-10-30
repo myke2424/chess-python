@@ -30,13 +30,15 @@ class Game:
                 if e.type == pygame.QUIT:
                     self.running = False
                 elif e.type == pygame.MOUSEBUTTONDOWN:
-                    # TODO: Move this logic into the event handler
                     location = pygame.mouse.get_pos()  # (x,y) location of mouse
                     col = location[0] // self.settings.SQUARE_SIZE
                     row = location[1] // self.settings.SQUARE_SIZE
-
-                    self.event_handler.click_square(row, col)
-
+                    # Left click
+                    if e.button == 1:
+                        self.event_handler.left_click_square(row, col)
+                    # Right click
+                    elif e.button == 3:
+                        self.event_handler.right_click_square(row, col)
                 elif e.type == pygame.KEYDOWN:
                     self.event_handler.press_key(key=e.key)
 

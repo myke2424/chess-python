@@ -27,10 +27,10 @@ class Move:
         """ Checks if two moves are the same """
         if isinstance(other, Move):
             if (
-                    self.start_row == other.start_row
-                    and self.dest_row == other.dest_row
-                    and self.start_col == other.start_col
-                    and self.dest_col == other.dest_col
+                self.start_row == other.start_row
+                and self.dest_row == other.dest_row
+                and self.start_col == other.start_col
+                and self.dest_col == other.dest_col
             ):
                 return True
         return False
