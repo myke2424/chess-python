@@ -1,11 +1,10 @@
 import logging
 import os
 import sys
-from typing import List
 
 import pygame
-from constants import EMPTY_SQUARE
 from settings import Settings
+from utils import EMPTY_SQUARE, Board
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +12,7 @@ logger = logging.getLogger(__name__)
 class GUI:
     """ Responsible for drawing the GUI (board, pieces, highlighting etc) """
 
-    def __init__(self, settings: Settings, board: List[List[str]]):
+    def __init__(self, settings: Settings, board: Board):
         self.board = board
         self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
         self.square_size = settings.SQUARE_SIZE

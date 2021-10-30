@@ -1,17 +1,17 @@
 import copy
 import logging
-from typing import List, Union
+from typing import List
 
-from constants import EMPTY_SQUARE
 from move import Move
-from piece import Color, Piece
-from square import Square
+from utils import EMPTY_SQUARE, Board, Color, Square
 
-from chess import (BLACKS_STARTING_KINGS_ROW, BLACKS_STARTING_PAWN_ROW,
-                   WHITES_STARTING_KINGS_ROW, WHITES_STARTING_PAWN_ROW)
+from chess import (
+    BLACKS_STARTING_KINGS_ROW,
+    BLACKS_STARTING_PAWN_ROW,
+    WHITES_STARTING_KINGS_ROW,
+    WHITES_STARTING_PAWN_ROW,
+)
 
-# str is an empty square
-Board = List[List[Union[Piece, str]]]
 logger = logging.getLogger(__name__)
 
 
@@ -81,6 +81,10 @@ class GameState:
 
         self._make_square_empty(row=move.start_row, col=move.start_col)
         self.board[move.dest_row][move.dest_col] = piece  # Move the piece
+
+        if move.is_pawn_promotion():
+            piece.promote()
+
         piece.pos = Square(row=move.dest_row, col=move.dest_col)
         piece.moves_made += 1
 

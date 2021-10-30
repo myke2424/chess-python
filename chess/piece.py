@@ -1,21 +1,14 @@
+import logging
 import uuid
 from abc import ABC, abstractmethod
 from copy import deepcopy
-from enum import Enum
-from typing import List, Optional
-import logging
+from typing import List
 
 from chess_notation import ChessNotationParser
-from constants import EMPTY_SQUARE
 from move import Move
-from square import Square
+from utils import EMPTY_SQUARE, Board, Color, Square
 
 logger = logging.getLogger(__name__)
-
-
-class Color(Enum):
-    WHITE = "w"
-    BLACK = "b"
 
 
 class Piece(ABC):
@@ -45,11 +38,11 @@ class Piece(ABC):
         return ChessNotationParser.from_row_and_col(self.pos.row, self.pos.col)
 
     @abstractmethod
-    def possible_moves(self, board) -> List[Move]:
+    def possible_moves(self, board: Board) -> List[Move]:
         """ Interface we can use to generate all possible moves for the piece given the current state of the board """
         pass
 
-    def capture(self, board, piece_to_capture: "Piece", moves: list) -> None:
+    def capture(self, board: Board, piece_to_capture: "Piece", moves: list) -> None:
         """ Interface used to generate a capture move on the board and add it to the list of moves """
         if isinstance(piece_to_capture, Piece) and piece_to_capture.color != self.color:
             move = Move(start_square=self.pos, dest_square=deepcopy(piece_to_capture.pos), board=board)
@@ -62,8 +55,8 @@ class Pawn(Piece):
     def __init__(self, color: str, row: int, col: int):
         super().__init__(color=color, row=row, col=col)
 
-    # TODO: Add pawn promotion
-    def possible_moves(self, board) -> List[Move]:
+    # TODO: Reduce complexity
+    def possible_moves(self, board: Board) -> List[Move]:
         """
         Get all the pawn moves for its current position on the board.
         Pawns can't move backwards
@@ -77,24 +70,41 @@ class Pawn(Piece):
         one_square_up = row - 1 if self.color == Color.WHITE else row + 1
         two_square_up = row - 2 if self.color == Color.WHITE else row + 2
 
-        if board[one_square_up][col] == EMPTY_SQUARE:
-            one_square_advance = Move(start_square=self.pos, dest_square=Square(one_square_up, col), board=board)
-            moves.append(one_square_advance)
+        # In bounds
+        if 7 >= one_square_up >= 0 and 7 >= col >= 0:
+            if board[one_square_up][col] == EMPTY_SQUARE:
+                one_square_advance = Move(start_square=self.pos, dest_square=Square(one_square_up, col), board=board)
+                moves.append(one_square_advance)
 
-            # 2 square pawn advance if it hasn't moved already
-            if self.moves_made == 0 and board[two_square_up][col] == EMPTY_SQUARE:
-                two_square_advance = Move(start_square=self.pos, dest_square=Square(two_square_up, col), board=board)
-                moves.append(two_square_advance)
+                # 2 square pawn advance if it hasn't moved already
+                if self.moves_made == 0 and board[two_square_up][col] == EMPTY_SQUARE:
+                    two_square_advance = Move(
+                        start_square=self.pos, dest_square=Square(two_square_up, col), board=board
+                    )
+                    moves.append(two_square_advance)
 
-        # Check if were in bounds (going left won't push us off the board)
-        if col - 1 >= 0:
-            self.capture(board=board, piece_to_capture=board[one_square_up][col - 1], moves=moves)
+            # Check if were in bounds (going left won't push us off the board)
+            if col - 1 >= 0:
+                self.capture(board=board, piece_to_capture=board[one_square_up][col - 1], moves=moves)
 
-        # Check if were in bounds (going right won't push us off the board)
-        if col + 1 <= 7:
-            self.capture(board=board, piece_to_capture=board[one_square_up][col + 1], moves=moves)
+            # Check if were in bounds (going right won't push us off the board)
+            if col + 1 <= 7:
+                self.capture(board=board, piece_to_capture=board[one_square_up][col + 1], moves=moves)
 
         return moves
+
+    # TODO: Image needs to update... GUI will handle this.
+    def promote(self) -> None:
+        """ Promote the pawn """
+        promote_to = {"q": Queen, "k": Knight, "r": Rook, "b": Bishop}
+
+        while True:
+            promoted_type = input("Promote to q (Queen), k (Knight), r (Rook) , b (Bishop) : ")
+            if promote_to.get(promoted_type) is not None:
+                break
+        logger.debug(f"{self} Promoted to {promote_to[promoted_type]}")
+        # change the class... this actually works....
+        self.__class__ = promote_to[promoted_type]
 
 
 class Bishop(Piece):
@@ -103,7 +113,7 @@ class Bishop(Piece):
     def __init__(self, color: str, row: int, col: int):
         super().__init__(color=color, row=row, col=col)
 
-    def possible_moves(self, board) -> List[Move]:
+    def possible_moves(self, board: Board) -> List[Move]:
         return []
 
 
@@ -113,7 +123,7 @@ class Knight(Piece):
     def __init__(self, color: str, row: int, col: int):
         super().__init__(color=color, row=row, col=col)
 
-    def possible_moves(self, board) -> List[Move]:
+    def possible_moves(self, board: Board) -> List[Move]:
         return []
 
 
@@ -123,7 +133,7 @@ class Rook(Piece):
     def __init__(self, color: str, row: int, col: int):
         super().__init__(color=color, row=row, col=col)
 
-    def possible_moves(self, board) -> List[Move]:
+    def possible_moves(self, board: Board) -> List[Move]:
         """
         Rooks can move left-right-up-down any amount of squares as long as pieces aren't in the way
         A rook can potentially move up to 7 squares (in four directions)
@@ -137,7 +147,7 @@ class Queen(Piece):
     def __init__(self, color: str, row: int, col: int):
         super().__init__(color=color, row=row, col=col)
 
-    def possible_moves(self, board) -> List[Move]:
+    def possible_moves(self, board: Board) -> List[Move]:
         return []
 
 
@@ -147,5 +157,5 @@ class King(Piece):
     def __init__(self, color: str, row: int, col: int):
         super().__init__(color=color, row=row, col=col)
 
-    def possible_moves(self, board) -> List[Move]:
+    def possible_moves(self, board: Board) -> List[Move]:
         return []

@@ -2,9 +2,8 @@ import logging
 
 from chess_notation import ChessNotationParser
 from move import Move
-from square import Square
 from state import GameState
-from constants import EMPTY_SQUARE
+from utils import EMPTY_SQUARE, Square
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +79,8 @@ class EventHandler:
             logger.debug(self.state.turn)
         elif key == ord("z"):
             self.state.reset_game()
+        elif key == ord("s"):
+            pass
         elif key == ord("v"):
             logger.debug(f"Valid Moves for {self.state.turn}")
             for move in self.state.get_valid_moves():
