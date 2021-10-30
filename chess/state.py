@@ -79,13 +79,15 @@ class GameState:
         white_score = reduce(lambda a, b: a + b, [p.value for p in white_pieces])
         black_score = reduce(lambda a, b: a + b, [p.value for p in black_pieces])
 
+        result = "No player has a piece advantage, the game is even"
+
         if white_score > black_score:
-            return f"Whites winning with a piece advantage of ({white_score - black_score})"
+            result = f"Whites winning with a piece advantage of ({white_score - black_score})"
 
         elif white_score < black_score:
-            return f"Blacks winning with a piece advantage of ({black_score - white_score})"
+            result = f"Blacks winning with a piece advantage of ({black_score - white_score})"
 
-        return "No player has a piece advantage, the game is even"
+        return result
 
     # TODO: Update it to work with pawn promotion/en passant
     def make_move(self, move: Move) -> None:
