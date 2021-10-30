@@ -150,6 +150,12 @@ class GameState:
 
         return valid_moves
 
+    def print_valid_moves(self) -> None:
+        """ Print all valid moves for the current player """
+        logger.debug(f"Valid Moves for {self.state.turn}")
+        for move in self.get_valid_moves():
+            logger.debug(move)
+
     def _get_all_possible_moves(self) -> List[Move]:
         """
         All moves without considering check
