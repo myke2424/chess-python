@@ -12,6 +12,9 @@ from utils import EMPTY_SQUARE, Board, Color, Square
 logger = logging.getLogger(__name__)
 
 
+# TODO: Refactor potential moves, a lot of repeating logic... BRUTE FORCING for now.
+
+
 class Piece(ABC):
     def __init__(self, color: str, row: int, col: int):
         self.color = Color(color)
@@ -135,24 +138,19 @@ class Bishop(Piece):
 
         for direction in directions:
             for i in range(1, 8):
-                # Up to 7 square advancements for each direction
                 row_advancement = row + direction.row * i
                 col_advancement = col + direction.col * i
 
-                # In bounds
                 if 0 <= row_advancement <= 7 and 0 <= col_advancement <= 7:
                     piece = board[row_advancement][col_advancement]
 
-                    # Our piece is blocking the square
                     if isinstance(piece, Piece) and piece.color == self.color:
                         break
-                    # It's empty... Add the move!
                     elif piece == EMPTY_SQUARE:
                         move = Move(
                             start_square=self.pos, dest_square=Square(row_advancement, col_advancement), board=board
                         )
                         moves.append(move)
-                    # Capture enemy piece!
                     else:
                         self.capture(board=board, piece_to_capture=piece, moves=moves)
         return moves
@@ -160,12 +158,40 @@ class Bishop(Piece):
 
 class Knight(Piece):
     value = 3
+    _potential_advancements = [(1, 2), (-1, 2), (1, -2), (-1, -2), (2, 1), (-2, 1), (2, -1), (-2, -1)]
 
     def __init__(self, color: str, row: int, col: int):
         super().__init__(color=color, row=row, col=col)
 
     def possible_moves(self, board: Board) -> List[Move]:
-        return []
+        """
+        Knights move in L-Shapes on the board and can jump over pieces to reach its destination.
+        Two square advancement vertically with one square horizontally or vice versa.
+        This means a knight has a maximum of 8 moves.
+        """
+        moves = []
+        row, col = self.pos.row, self.pos.col
+        knight_advancements = [Square(*adv) for adv in self._potential_advancements]
+
+        for advancement in knight_advancements:
+            row_advancement = row + advancement.row
+            col_advancement = col + advancement.col
+
+            # In bounds
+            if 0 <= row_advancement <= 7 and 0 <= col_advancement <= 7:
+                piece = board[row_advancement][col_advancement]
+
+                if isinstance(piece, Piece) and piece.color == self.color:
+                    continue
+                elif piece == EMPTY_SQUARE:
+                    move = Move(
+                        start_square=self.pos, dest_square=Square(row_advancement, col_advancement), board=board
+                    )
+                    moves.append(move)
+                else:
+                    self.capture(board=board, piece_to_capture=piece, moves=moves)
+
+        return moves
 
 
 class Rook(Piece):
