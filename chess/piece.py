@@ -131,6 +131,7 @@ class Knight(Piece):
 
 class Rook(Piece):
     value = 5
+    _Directions = namedtuple("Directions", "up down left right")
 
     def __init__(self, color: str, row: int, col: int):
         super().__init__(color=color, row=row, col=col)
@@ -140,62 +141,34 @@ class Rook(Piece):
         Rooks can move left-right-up-down any amount of squares as long as pieces aren't in the way
         A rook can potentially move up to 7 squares (in four directions)
         """
-        # (row,col)
-        # (-1,0) is UP
-        # (1, 0) is DOWN
-        # (0, -1) is LEFT
-        # (0, 1) is Right
-        # directions = ((-1, 0), (1, 0), (0, -1), (0, 1))
 
         moves = []
         row, col = self.pos.row, self.pos.col
-
-        Directions = namedtuple('Directions', 'up down left right')
-        directions = Directions(up=Square(-1, 0), down=Square(1, 0), left=Square(0, -1), right=Square(0, 1))
+        directions = self._Directions(up=Square(-1, 0), down=Square(1, 0), left=Square(0, -1), right=Square(0, 1))
 
         for direction in directions:
             for i in range(1, 8):
-                r = row + direction.row * i
-                c = col + direction.col * i
+                # Up to 7 square advancements for each direction
+                row_advancement = row + direction.row * i
+                col_advancement = col + direction.col * i
 
                 # In bounds
-                if 0 <= r <= 7 and 0 <= c <= 7:
-                    p = board[r][c]
+                if 0 <= row_advancement <= 7 and 0 <= col_advancement <= 7:
+                    piece = board[row_advancement][col_advancement]
 
                     # Our piece is blocking the square
-                    if isinstance(p, Piece) and p.color == self.color:
+                    if isinstance(piece, Piece) and piece.color == self.color:
                         break
-                    # It's empty... VALID MOVE
-                    elif p == EMPTY_SQUARE:
-                        moves.append(Move(self.pos, Square(r, c), board))
-
-                    # CAPTURE
+                    # It's empty... Add the move!
+                    elif piece == EMPTY_SQUARE:
+                        move = Move(
+                            start_square=self.pos, dest_square=Square(row_advancement, col_advancement), board=board
+                        )
+                        moves.append(move)
+                    # Capture enemy piece!
                     else:
-                        self.capture(board, p, moves)
+                        self.capture(board=board, piece_to_capture=piece, moves=moves)
         return moves
-
-        # 0 - 6
-        # c = 1
-        # for i in range(7):
-        #     # move down
-        #     if row + c >= 7:
-        #         break
-        #     next_row = board[row + c][col]
-        #     if next_row.id == self.id:
-        #         print("YO")
-        #         break
-        #         # capture
-        #     elif isinstance(next_row, Piece) and next_row.color != self.color:
-        #         m = Move(self.pos, Square(row + c, col), board)
-        #         c += 1
-        #         moves.append(m)
-        #         break
-        #     else:
-        #         m = Move(self.pos, Square(row + c, col), board)
-        #         c += 1
-        #         moves.append(m)
-        #
-        # return moves
 
 
 class Queen(Piece):

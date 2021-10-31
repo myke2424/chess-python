@@ -29,7 +29,12 @@ class GUI:
     def _draw_square(self, row: int, col: int) -> None:
         """ Draw one square on the board for the given row/col """
         color = self.board_colors[((row + col) % 2)]
-        square = pygame.Rect(col * self.square_size, row * self.square_size, self.square_size, self.square_size)
+        square = pygame.Rect(
+            col * self.square_size,
+            row * self.square_size,
+            self.square_size,
+            self.square_size,
+        )
         pygame.draw.rect(surface=self.screen, color=color, rect=square)
 
     def _draw_board(self) -> None:
@@ -43,7 +48,12 @@ class GUI:
         piece = self.board[row][col]
         # TODO: Refactor to an enum?
         if piece != EMPTY_SQUARE:
-            square = pygame.Rect(col * self.square_size, row * self.square_size, self.square_size, self.square_size)
+            square = pygame.Rect(
+                col * self.square_size,
+                row * self.square_size,
+                self.square_size,
+                self.square_size,
+            )
             # 'blit' draws the image on the screen on the given square (piece.name has a 1-to-1 mapping to an img name)
             self.screen.blit(self.piece_images[piece.name], square)
 
@@ -70,6 +80,8 @@ class GUI:
         for image_path in images:
             piece = image_path.split(".")[0]  # get the filename without ext
             loaded_piece_image = self._load_and_scale_image(
-                image_path=f"{image_dir}/{image_path}", width=self.square_size, height=self.square_size
+                image_path=f"{image_dir}/{image_path}",
+                width=self.square_size,
+                height=self.square_size,
             )
             self.piece_images[piece] = loaded_piece_image

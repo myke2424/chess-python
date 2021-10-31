@@ -29,7 +29,7 @@ class EventHandler:
             "TURN": ord("t"),
             "RESET_GAME": ord("z"),
             "SCORE": ord("s"),
-            "VALID_MOVES": ord("v")
+            "VALID_MOVES": ord("v"),
         }
 
     def left_click_square(self, row: int, col: int) -> None:
