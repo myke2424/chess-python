@@ -153,7 +153,7 @@ class GameState:
 
     def print_valid_moves(self) -> None:
         """ Print all valid moves for the current player """
-        logger.debug(f"Valid Moves for {self.state.turn}")
+        logger.debug(f"Valid Moves for {self.turn}")
         for move in self.get_valid_moves():
             logger.debug(move)
 
