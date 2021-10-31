@@ -111,12 +111,51 @@ class Pawn(Piece):
 
 class Bishop(Piece):
     value = 3
+    _Directions = namedtuple("Directions", "up_right_diag, up_left_diag down_left_diag down_right_diag")
 
     def __init__(self, color: str, row: int, col: int):
         super().__init__(color=color, row=row, col=col)
 
+    # TODO: Bishop move logic is very similar to rooks, possible refactor (add method on piece?)
     def possible_moves(self, board: Board) -> List[Move]:
-        return []
+        """
+        Bishops can only move on diagonals. It can potentially move up to 7 square diagonally if no piece is blocking.
+        If it starts on a dark square, it can only attack dark square pieces.
+        If it starts on a light square, it can only attack light square pieces
+        """
+        moves = []
+        row, col = self.pos.row, self.pos.col
+
+        directions = self._Directions(
+            up_right_diag=Square(-1, 1),
+            up_left_diag=Square(-1, -1),
+            down_left_diag=Square(1, -1),
+            down_right_diag=Square(1, 1),
+        )
+
+        for direction in directions:
+            for i in range(1, 8):
+                # Up to 7 square advancements for each direction
+                row_advancement = row + direction.row * i
+                col_advancement = col + direction.col * i
+
+                # In bounds
+                if 0 <= row_advancement <= 7 and 0 <= col_advancement <= 7:
+                    piece = board[row_advancement][col_advancement]
+
+                    # Our piece is blocking the square
+                    if isinstance(piece, Piece) and piece.color == self.color:
+                        break
+                    # It's empty... Add the move!
+                    elif piece == EMPTY_SQUARE:
+                        move = Move(
+                            start_square=self.pos, dest_square=Square(row_advancement, col_advancement), board=board
+                        )
+                        moves.append(move)
+                    # Capture enemy piece!
+                    else:
+                        self.capture(board=board, piece_to_capture=piece, moves=moves)
+        return moves
 
 
 class Knight(Piece):

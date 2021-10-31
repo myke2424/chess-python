@@ -155,6 +155,7 @@ class GameState:
         """
         valid_moves = []
 
+        # TODO: Validate the possible moves!
         if self.white_turn:
             valid_moves.extend(self._get_all_possible_moves_for_color(Color.WHITE))
         else:
