@@ -243,7 +243,16 @@ class Queen(Piece):
         super().__init__(color=color, row=row, col=col)
 
     def possible_moves(self, board: Board) -> List[Move]:
-        return []
+        """
+        Queens can move any number of unoccupied squares vertically, horizontally or diagonally.
+        Thus combining the moves of the rook(vertical/horizontal) and the bishop(diagonal)
+        """
+        # This feels hacky but this abstraction will work for now
+        _rook = Rook(color=self.color.value, row=self.pos.row, col=self.pos.col)
+        _bishop = Bishop(color=self.color.value, row=self.pos.row, col=self.pos.col)
+        moves = [*_rook.possible_moves(board), *_bishop.possible_moves(board)]
+
+        return moves
 
 
 class King(Piece):
@@ -253,4 +262,7 @@ class King(Piece):
         super().__init__(color=color, row=row, col=col)
 
     def possible_moves(self, board: Board) -> List[Move]:
-        return []
+        moves = []
+        row, col = self.pos.row, self.pos.col
+
+        return moves
