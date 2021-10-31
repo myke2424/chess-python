@@ -42,7 +42,7 @@ class Piece(ABC):
         """ Interface we can use to generate all possible moves for the piece given the current state of the board """
         pass
 
-    def capture(self, board: Board, piece_to_capture: "Piece", moves: list) -> None:
+    def capture(self, board: Board, piece_to_capture: "Piece", moves: List[Move]) -> None:
         """ Interface used to generate a capture move on the board and add it to the list of moves """
         if isinstance(piece_to_capture, Piece) and piece_to_capture.color != self.color:
             move = Move(start_square=self.pos, dest_square=deepcopy(piece_to_capture.pos), board=board)
@@ -93,8 +93,7 @@ class Pawn(Piece):
 
         return moves
 
-    # TODO: Image needs to update... GUI will handle this.
-    def promote(self) -> None:
+    def promote(self) -> Piece:
         """ Promote the pawn """
         promote_to = {"q": Queen, "k": Knight, "r": Rook, "b": Bishop}
 
@@ -102,9 +101,11 @@ class Pawn(Piece):
             promoted_type = input("Promote to q (Queen), k (Knight), r (Rook) , b (Bishop) : ")
             if promote_to.get(promoted_type) is not None:
                 break
-        logger.debug(f"{self} Promoted to {promote_to[promoted_type]}")
-        # change the class... this actually works....
-        self.__class__ = promote_to[promoted_type]
+
+        promoted_cls = promote_to[promoted_type]
+        logger.debug(f"{self} Promoted to {promoted_cls}")
+
+        return promoted_cls(color=self.color.value, row=self.pos.row, col=self.pos.col)
 
 
 class Bishop(Piece):
@@ -138,6 +139,7 @@ class Rook(Piece):
         Rooks can move left-right-up-down any amount of squares as long as pieces aren't in the way
         A rook can potentially move up to 7 squares (in four directions)
         """
+
         return []
 
 

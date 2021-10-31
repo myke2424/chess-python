@@ -89,15 +89,19 @@ class GameState:
 
         return result
 
-    # TODO: Update it to work with pawn promotion/en passant
     def make_move(self, move: Move) -> None:
         """ Move a piece on the chess board """
         valid_moves = self.get_valid_moves()
         if move in valid_moves:
             self._update_board_state(move=move)
+
+            if move.is_pawn_promotion():
+                promoted = move.piece_to_move.promote()
+                self.board[move.dest_row][move.dest_col] = promoted
         else:
             logger.debug(f"{move} isn't a valid move. Please make a valid move")
 
+    # TODO: Refactor
     def _update_board_state(self, move: Move) -> None:
         """ Update the boards state based on the move """
         # Makes original spot empty since we're moving the piece
@@ -105,9 +109,6 @@ class GameState:
 
         self._make_square_empty(row=move.start_row, col=move.start_col)
         self.board[move.dest_row][move.dest_col] = piece  # Move the piece
-
-        if move.is_pawn_promotion():
-            piece.promote()
 
         piece.pos = Square(row=move.dest_row, col=move.dest_col)
         piece.moves_made += 1
