@@ -4,7 +4,7 @@ from typing import List
 from functools import reduce
 from itertools import chain
 
-from piece import Piece
+from piece import Piece, King
 from move import Move
 from utils import EMPTY_SQUARE, Board, Color, Square
 
@@ -58,11 +58,6 @@ class GameState:
         return copy.deepcopy(board)
 
     @property
-    def turn(self) -> str:
-        """ Who's turn is it? """
-        return "Whites turn" if self.white_turn else "Blacks Turn"
-
-    @property
     def all_pieces(self) -> List[Piece]:
         """ Return a 1D list containing all active pieces on the board"""
         board = copy.deepcopy(self.board)
@@ -88,17 +83,21 @@ class GameState:
 
         return result
 
+    @property
+    def turn(self) -> str:
+        """ Who's turn is it? """
+        return "Whites turn" if self.white_turn else "Blacks Turn"
+
     @staticmethod
     def _get_total_piece_score(pieces: List[Piece]) -> int:
         """ Add up all the values for each piece """
         return reduce(lambda a, b: a + b, [p.value for p in pieces])
 
-    @classmethod
-    def is_square_empty(cls, row: int, col: int) -> bool:
-        """ Checks if the square (row/col) is empty """
-        if cls.board[row][col] == EMPTY_SQUARE:
-            return True
-        return False
+    # TODO: Potential refactor. It's probably better to just update the kings position everytime we move it,
+    #   that way we don't have to scan the board for it each time we need to access it
+    def king(self, color: Color) -> King:
+        """ Return king object given the color """
+        return list(filter(lambda p: isinstance(p, King) and p.color == color, self.all_pieces)).pop()
 
     def make_move(self, move: Move) -> None:
         """ Move a piece on the chess board """
@@ -171,8 +170,8 @@ class GameState:
 
     def _get_all_possible_moves(self) -> List[Move]:
         """
-        All moves without considering check
-        Iterate over the entire board evaluating all pieces for the current player
+        Generate all possible moves for each piece
+        Iterate over the entire board evaluating every pieces potential moves (zero validation done)
         """
         moves = []
         n = len(self.board)

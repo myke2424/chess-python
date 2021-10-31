@@ -35,6 +35,7 @@ class Game:
                     row = location[1] // self.settings.SQUARE_SIZE
                     # Left click
                     if e.button == 1:
+                        # TODO: Add highlighting when the square is clicked.
                         self.event_handler.left_click_square(row, col)
                     # Right click
                     elif e.button == 3:
