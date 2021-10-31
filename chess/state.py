@@ -1,5 +1,7 @@
 import copy
 import logging
+import pygame
+
 from typing import List
 from functools import reduce
 from itertools import chain
@@ -32,6 +34,7 @@ class GameState:
         self.board = self.initial_board_state()
         self.move_log = []
         self.white_turn = True
+        self.time_elapsed = pygame.time.Clock()
 
     def __repr__(self) -> str:
         """ Current chess board state represented in unicode """
@@ -40,7 +43,7 @@ class GameState:
 
     def __len__(self) -> str:
         """ Return the total time elapsed in the game """
-        pass
+        return self.time_elapsed
 
     @staticmethod
     def initial_board_state() -> Board:
@@ -65,8 +68,18 @@ class GameState:
         return list(filter(lambda p: isinstance(p, Piece), flattened_board))  # filter out empty squares
 
     @property
-    def score(self) -> str:
+    def current_color(self) -> Color:
+        return Color.WHITE if self.white_turn else Color.BLACK
+
+    @staticmethod
+    def _get_total_piece_score(pieces: List[Piece]) -> int:
+        """ Add up all the values for each piece """
+        return reduce(lambda a, b: a + b, [p.value for p in pieces])
+
+    def score(self) -> None:
         """ Who has the piece advantage? """
+        logger.debug(f"{self.current_color} Turn")
+
         white_pieces = list(filter(lambda p: p.color == Color.WHITE, self.all_pieces))
         black_pieces = list(filter(lambda p: p.color == Color.BLACK, self.all_pieces))
 
@@ -81,21 +94,7 @@ class GameState:
         elif white_score < black_score:
             result = f"Blacks winning with a piece advantage of ({black_score - white_score})"
 
-        return result
-
-    @property
-    def turn(self) -> str:
-        """ Who's turn is it? """
-        return "Whites turn" if self.white_turn else "Blacks Turn"
-
-    @property
-    def _current_color(self) -> Color:
-        return Color.WHITE if self.white_turn else Color.BLACK
-
-    @staticmethod
-    def _get_total_piece_score(pieces: List[Piece]) -> int:
-        """ Add up all the values for each piece """
-        return reduce(lambda a, b: a + b, [p.value for p in pieces])
+        logger.debug(result)
 
     def king(self, color: Color) -> King:
         """ Return king object given the color """
@@ -105,7 +104,8 @@ class GameState:
         """ Move a piece on the chess board """
         valid_moves = self.get_valid_moves()
         if move in valid_moves:
-            self._update_board_state(move=move)
+            logger.debug(f"Move made: {move}")
+            self._make_move(move=move)
 
             if move.is_pawn_promotion():
                 promoted = move.piece_to_move.promote()
@@ -113,9 +113,8 @@ class GameState:
         else:
             logger.debug(f"{move} isn't a valid move. Please make a valid move")
 
-    # TODO: Refactor
-    def _update_board_state(self, move: Move) -> None:
-        """ Update the boards state based on the move """
+    def _make_move(self, move: Move) -> None:
+        """ Make a move without validating it """
         # Makes original spot empty since we're moving the piece
         piece = move.piece_to_move
 
@@ -125,7 +124,6 @@ class GameState:
         piece.pos = Square(row=move.dest_row, col=move.dest_col)
         piece.moves_made += 1
 
-        logger.debug(f"Move made:{move}")
         self.move_log.append(move)
         self.white_turn = not self.white_turn
 
@@ -164,19 +162,19 @@ class GameState:
         valid_moves = []
 
         # Generate all moves for the current player
-        possible_moves = self._get_all_possible_moves_for_color(self._current_color)
+        possible_moves = self._get_all_possible_moves_for_color(self.current_color)
 
         for current_move in possible_moves:
             is_valid_move = True
             # Make the move
-            self._update_board_state(move=current_move)
+            self._make_move(move=current_move)
             # Generate opponents moves (color will switch since we made a move)
-            opponent_possible_moves = self._get_all_possible_moves_for_color(self._current_color)
+            opponent_possible_moves = self._get_all_possible_moves_for_color(self.current_color)
 
             for opponent_move in opponent_possible_moves:
                 # Since the opponent move forced a check, our current player move isn't valid.
                 if opponent_move.is_check():
-                    logger.debug(f"{current_move} is not VALID. {self._current_color} King in check ")
+                    logger.debug(f"{current_move} is not VALID. {self.current_color} King in check ")
                     is_valid_move = False
                     break
 
@@ -189,7 +187,7 @@ class GameState:
 
     def print_valid_moves(self) -> None:
         """ Print all valid moves for the current player """
-        logger.debug(f"Valid Moves for {self.turn}")
+        logger.debug(f"Valid Moves for {self.current_color}")
         for move in self.get_valid_moves():
             logger.debug(move)
 

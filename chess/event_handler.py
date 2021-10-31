@@ -24,13 +24,12 @@ class EventHandler:
         self.second_click_location = None
 
         self.event_key_map = {
-            "UNDO_MOVE": ord("u"),
-            "REDO_MOVE": ord("r"),
-            "TURN": ord("t"),
-            "RESET_GAME": ord("z"),
-            "SCORE": ord("s"),
-            "VALID_MOVES": ord("v"),
-            "MOVE_LOG": ord("m"),
+            ord('u'): self.state.undo_move,
+            ord('r'): self.state.redo_move,
+            ord('z'): self.state.reset_game,
+            ord('v'): self.state.print_valid_moves,
+            ord('m'): self.state.print_move_log,
+            ord('s'): self.state.score
         }
 
     def left_click_square(self, row: int, col: int) -> None:
@@ -80,21 +79,9 @@ class EventHandler:
         handler for when keys are pressed.
         :param key: Unicode representation of the key
         """
-        # Press 'u' to undo your last move
-        if key == self.event_key_map["UNDO_MOVE"]:
-            self.state.undo_move()
-        elif key == self.event_key_map["REDO_MOVE"]:
-            self.state.redo_move()
-        elif key == self.event_key_map["TURN"]:
-            logger.debug(self.state.turn)
-        elif key == self.event_key_map["RESET_GAME"]:
-            self.state.reset_game()
-        elif key == self.event_key_map["SCORE"]:
-            logger.debug(self.state.score)
-        elif key == self.event_key_map["VALID_MOVES"]:
-            self.state.print_valid_moves()
-        elif key == self.event_key_map["MOVE_LOG"]:
-            self.state.print_move_log()
+        if self.event_key_map.get(key) is not None:
+            event = self.event_key_map[key]
+            event()
 
     def _reset_clicks(self) -> None:
         """ After the player makes their move, reset the player clicks/square clicked """
