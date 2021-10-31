@@ -167,7 +167,7 @@ class Knight(Piece):
         """
         Knights move in L-Shapes on the board and can jump over pieces to reach its destination.
         Two square advancement vertically with one square horizontally or vice versa.
-        This means a knight has a maximum of 8 moves.
+        This means a knight has a maximum of 8 potential landing squares.
         """
         moves = []
         row, col = self.pos.row, self.pos.col
@@ -257,12 +257,36 @@ class Queen(Piece):
 
 class King(Piece):
     value = 100
+    _potential_advancements = [(0, -1), (0, 1), (1, -1), (1, 0), (1, 1), (-1, -1), (-1, 0), (-1, 1)]
 
     def __init__(self, color: str, row: int, col: int):
         super().__init__(color=color, row=row, col=col)
 
     def possible_moves(self, board: Board) -> List[Move]:
+        """
+        Kings can only move one space in any direction. Up to 8 potential landing squares.
+        The king can never move into a spot where it will be danger (checked)
+        """
         moves = []
         row, col = self.pos.row, self.pos.col
+        king_advancements = [Square(*adv) for adv in self._potential_advancements]
+
+        for advancement in king_advancements:
+            row_advancement = row + advancement.row
+            col_advancement = col + advancement.col
+
+            # In bounds
+            if 0 <= row_advancement <= 7 and 0 <= col_advancement <= 7:
+                piece = board[row_advancement][col_advancement]
+
+                if isinstance(piece, Piece) and piece.color == self.color:
+                    continue
+                elif piece == EMPTY_SQUARE:
+                    move = Move(
+                        start_square=self.pos, dest_square=Square(row_advancement, col_advancement), board=board
+                    )
+                    moves.append(move)
+                else:
+                    self.capture(board=board, piece_to_capture=piece, moves=moves)
 
         return moves
