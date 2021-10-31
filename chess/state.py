@@ -88,13 +88,15 @@ class GameState:
         """ Who's turn is it? """
         return "Whites turn" if self.white_turn else "Blacks Turn"
 
+    @property
+    def _current_color(self) -> Color:
+        return Color.WHITE if self.white_turn else Color.BLACK
+
     @staticmethod
     def _get_total_piece_score(pieces: List[Piece]) -> int:
         """ Add up all the values for each piece """
         return reduce(lambda a, b: a + b, [p.value for p in pieces])
 
-    # TODO: Potential refactor. It's probably better to just update the kings position everytime we move it,
-    #   that way we don't have to scan the board for it each time we need to access it
     def king(self, color: Color) -> King:
         """ Return king object given the color """
         return list(filter(lambda p: isinstance(p, King) and p.color == color, self.all_pieces)).pop()
@@ -145,20 +147,43 @@ class GameState:
         self.move_log.clear()
         self.white_turn = True
 
+    # TODO: Improve algorithm. Naive approach generating all moves / future opponent moves
+    #  probably a more efficient way to do this
     def get_valid_moves(self) -> List[Move]:
         """
-        Generate all valid moves.
-        If the user makes a move, and the game state changes, we should regenerate all moves.
-        In order to validate a move, you need to generate all of the opposing color possible moves.
-        If your king is safe, it is a valid move.
+        Gets all valid moves for current player.
+        To validate a move, we need to do the following:
+        1. Generate every possible move for the current player
+        2. Make each move
+        3. After each move is made, generate all opponents moves and see if our king is under attack
+        4. Evaluate all opponent moves, if ANY of there moves attack your king, your original move isn't valid.
+        5. Undo each move
+
+        This algorithm is very expensive... Gotta work on it...
         """
         valid_moves = []
 
-        # TODO: Validate the possible moves!
-        if self.white_turn:
-            valid_moves.extend(self._get_all_possible_moves_for_color(Color.WHITE))
-        else:
-            valid_moves.extend(self._get_all_possible_moves_for_color(Color.BLACK))
+        # Generate all moves for the current player
+        possible_moves = self._get_all_possible_moves_for_color(self._current_color)
+
+        for current_move in possible_moves:
+            is_valid_move = True
+            # Make the move
+            self._update_board_state(move=current_move)
+            # Generate opponents moves (color will switch since we made a move)
+            opponent_possible_moves = self._get_all_possible_moves_for_color(self._current_color)
+
+            for opponent_move in opponent_possible_moves:
+                # Since the opponent move forced a check, our current player move isn't valid.
+                if opponent_move.is_check():
+                    logger.debug(f"{current_move} is not VALID. {self._current_color} King in check ")
+                    is_valid_move = False
+                    break
+
+            self.undo_move()
+
+            if is_valid_move:
+                valid_moves.append(current_move)
 
         return valid_moves
 
@@ -166,6 +191,11 @@ class GameState:
         """ Print all valid moves for the current player """
         logger.debug(f"Valid Moves for {self.turn}")
         for move in self.get_valid_moves():
+            logger.debug(move)
+
+    def print_move_log(self) -> None:
+        logger.debug("--- MOVE LOG ---")
+        for move in self.move_log:
             logger.debug(move)
 
     def _get_all_possible_moves(self) -> List[Move]:

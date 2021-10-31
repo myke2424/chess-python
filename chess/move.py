@@ -43,6 +43,16 @@ class Move:
 
         return False
 
+    def is_check(self) -> bool:
+        """ Checks if the move is attacking the other king (check) """
+        if (
+            hasattr(self.piece_to_capture, "value")
+            and self.piece_to_capture.value == 100
+            and self.piece_to_capture.color != self.piece_to_move.color
+        ):
+            return True
+        return False
+
     @classmethod
     def from_chess_notation(cls, starting_square: str, destination_square: str, board: Board) -> "Move":
         """ Alternate constructor to create a move obj from standard chess notation """

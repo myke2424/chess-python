@@ -30,6 +30,7 @@ class EventHandler:
             "RESET_GAME": ord("z"),
             "SCORE": ord("s"),
             "VALID_MOVES": ord("v"),
+            "MOVE_LOG": ord("m"),
         }
 
     def left_click_square(self, row: int, col: int) -> None:
@@ -92,6 +93,8 @@ class EventHandler:
             logger.debug(self.state.score)
         elif key == self.event_key_map["VALID_MOVES"]:
             self.state.print_valid_moves()
+        elif key == self.event_key_map["MOVE_LOG"]:
+            self.state.print_move_log()
 
     def _reset_clicks(self) -> None:
         """ After the player makes their move, reset the player clicks/square clicked """
