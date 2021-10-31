@@ -75,9 +75,8 @@ class GameState:
         white_pieces = list(filter(lambda p: p.color == Color.WHITE, self.all_pieces))
         black_pieces = list(filter(lambda p: p.color == Color.BLACK, self.all_pieces))
 
-        # total values with a reducer
-        white_score = reduce(lambda a, b: a + b, [p.value for p in white_pieces])
-        black_score = reduce(lambda a, b: a + b, [p.value for p in black_pieces])
+        white_score = self._get_total_piece_score(white_pieces)
+        black_score = self._get_total_piece_score(black_pieces)
 
         result = "No player has a piece advantage, the game is even"
 
@@ -88,6 +87,18 @@ class GameState:
             result = f"Blacks winning with a piece advantage of ({black_score - white_score})"
 
         return result
+
+    @staticmethod
+    def _get_total_piece_score(pieces: List[Piece]) -> int:
+        """ Add up all the values for each piece """
+        return reduce(lambda a, b: a + b, [p.value for p in pieces])
+
+    @classmethod
+    def is_square_empty(cls, row: int, col: int) -> bool:
+        """ Checks if the square (row/col) is empty """
+        if cls.board[row][col] == EMPTY_SQUARE:
+            return True
+        return False
 
     def make_move(self, move: Move) -> None:
         """ Move a piece on the chess board """
@@ -135,13 +146,13 @@ class GameState:
         self.move_log.clear()
         self.white_turn = True
 
-    # If the user makes a move, and the game state changes, we should regenerate all moves
-    # In order to validate the move of a black, you need to generate all of whites possible moves.
-    # Make the move, generate all possible moves the opposing player, see if any of the moves attack your king
-    # If your king is safe, it is a valid move, and add it to the list, return list of valid moves
-
     def get_valid_moves(self) -> List[Move]:
-        """ All moves considering check """
+        """
+        Generate all valid moves.
+        If the user makes a move, and the game state changes, we should regenerate all moves.
+        In order to validate a move, you need to generate all of the opposing color possible moves.
+        If your king is safe, it is a valid move.
+        """
         valid_moves = []
 
         if self.white_turn:
@@ -179,10 +190,3 @@ class GameState:
     def _make_square_empty(self, row: int, col: int) -> None:
         """ Render the square empty on the given row/col"""
         self.board[row][col] = EMPTY_SQUARE
-
-    @classmethod
-    def is_square_empty(cls, row: int, col: int) -> bool:
-        """ Checks if the square (row/col) is empty """
-        if cls.board[row][col] == EMPTY_SQUARE:
-            return True
-        return False
