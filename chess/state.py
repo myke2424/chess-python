@@ -132,9 +132,11 @@ class GameState:
         if not self.move_log:
             return
         previous_move = self.move_log.pop()
+        previous_move.piece_to_move.pos = Square(previous_move.start_row, previous_move.start_col)  # reset the square
         self.board[previous_move.start_row][previous_move.start_col] = previous_move.piece_to_move
         self.board[previous_move.dest_row][previous_move.dest_col] = previous_move.piece_to_capture
-        self.white_turn = not self.white_turn  # Switch the turn back since we undo'd a move
+        previous_move.piece_to_move.moves_made -= 1  # decrement moves made
+        self.white_turn = not self.white_turn  # Switch the turn back since we undid a move
 
     def redo_move(self) -> None:
         pass
@@ -164,24 +166,22 @@ class GameState:
         # Generate all moves for the current player
         possible_moves = self._get_all_possible_moves_for_color(self.current_color)
 
-        for current_move in possible_moves:
+        for move in possible_moves:
             is_valid_move = True
-            # Make the move
-            self._make_move(move=current_move)
-            # Generate opponents moves (color will switch since we made a move)
+            self._make_move(move)
+
+            # Generate opponent moves (color will switch since a move was made)
             opponent_possible_moves = self._get_all_possible_moves_for_color(self.current_color)
 
-            for opponent_move in opponent_possible_moves:
-                # Since the opponent move forced a check, our current player move isn't valid.
-                if opponent_move.is_check():
-                    logger.debug(f"{current_move} is not VALID. {self.current_color} King in check ")
+            for o_move in opponent_possible_moves:
+                if o_move.is_check():
+                    logger.debug(f"{move} is not VALID. {self.current_color} King in CHECK!")
                     is_valid_move = False
                     break
 
             self.undo_move()
-
             if is_valid_move:
-                valid_moves.append(current_move)
+                valid_moves.append(move)
 
         return valid_moves
 

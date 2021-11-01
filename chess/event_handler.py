@@ -24,12 +24,12 @@ class EventHandler:
         self.second_click_location = None
 
         self.event_key_map = {
-            ord('u'): self.state.undo_move,
-            ord('r'): self.state.redo_move,
-            ord('z'): self.state.reset_game,
-            ord('v'): self.state.print_valid_moves,
-            ord('m'): self.state.print_move_log,
-            ord('s'): self.state.score
+            ord("u"): self.state.undo_move,
+            ord("r"): self.state.redo_move,
+            ord("z"): self.state.reset_game,
+            ord("v"): self.state.print_valid_moves,
+            ord("m"): self.state.print_move_log,
+            ord("s"): self.state.score,
         }
 
     def left_click_square(self, row: int, col: int) -> None:
