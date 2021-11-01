@@ -1,5 +1,9 @@
+import logging
+
 from chess_notation import ChessNotationParser
 from utils import Board, Color, Square
+
+logger = logging.getLogger(__name__)
 
 
 class Move:
@@ -25,10 +29,10 @@ class Move:
         """ Checks if two moves are the same """
         if isinstance(other, Move):
             if (
-                self.start_row == other.start_row
-                and self.dest_row == other.dest_row
-                and self.start_col == other.start_col
-                and self.dest_col == other.dest_col
+                    self.start_row == other.start_row
+                    and self.dest_row == other.dest_row
+                    and self.start_col == other.start_col
+                    and self.dest_col == other.dest_col
             ):
                 return True
         return False
@@ -46,9 +50,9 @@ class Move:
     def is_check(self) -> bool:
         """ Checks if the move is attacking the other king (check) """
         if (
-            hasattr(self.piece_to_capture, "value")
-            and self.piece_to_capture.value == 100
-            and self.piece_to_capture.color != self.piece_to_move.color
+                hasattr(self.piece_to_capture, "value")
+                and self.piece_to_capture.value == 100
+                and self.piece_to_capture.color != self.piece_to_move.color
         ):
             return True
         return False

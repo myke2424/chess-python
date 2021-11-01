@@ -1,6 +1,7 @@
 import copy
 import logging
 import pygame
+import sys
 
 from typing import List
 from functools import reduce
@@ -33,8 +34,10 @@ class GameState:
 
         self.board = self.initial_board_state()
         self.move_log = []
-        self.white_turn = True
         self.time_elapsed = pygame.time.Clock()
+        self.white_turn = True
+        self.checkmate = False  # No valid moves while the king in check
+        self.stalemate = False  # No valid moves while the king is not in check
 
     def __repr__(self) -> str:
         """ Current chess board state represented in unicode """
@@ -103,6 +106,14 @@ class GameState:
     def make_move(self, move: Move) -> None:
         """ Move a piece on the chess board """
         valid_moves = self.get_valid_moves()
+        if len(valid_moves) == 0:
+            logger.debug(f"GAME OVER! CHECKMATE!")
+            sys.exit(1)
+
+        if self.stalemate:
+            logger.debug(f"GAME OVER! STALEMATE!")
+            sys.exit(1)
+
         if move in valid_moves:
             logger.debug(f"Move made: {move}")
             self._make_move(move=move)
@@ -127,6 +138,7 @@ class GameState:
         self.move_log.append(move)
         self.white_turn = not self.white_turn
 
+    # TODO: Refactor
     def undo_move(self) -> None:
         """ Undo the previous move """
         if not self.move_log:
@@ -137,6 +149,7 @@ class GameState:
         self.board[previous_move.dest_row][previous_move.dest_col] = previous_move.piece_to_capture
         previous_move.piece_to_move.moves_made -= 1  # decrement moves made
         self.white_turn = not self.white_turn  # Switch the turn back since we undid a move
+        self.checkmate, self.stalemate = False, False
 
     def redo_move(self) -> None:
         pass
@@ -146,6 +159,16 @@ class GameState:
         self.board = self.initial_board_state()
         self.move_log.clear()
         self.white_turn = True
+
+    def in_check(self) -> bool:
+        """ Is the current player in check? """
+        # generate opponent moves
+        color = Color.WHITE if self.white_turn else Color.BLACK
+        opponent_moves = self._get_all_possible_moves_for_color(color)  # valid moves?
+        for move in opponent_moves:
+            if move.is_check():
+                return True
+        return False
 
     # TODO: Improve algorithm. Naive approach generating all moves / future opponent moves
     #  probably a more efficient way to do this
@@ -175,13 +198,19 @@ class GameState:
 
             for o_move in opponent_possible_moves:
                 if o_move.is_check():
-                    logger.debug(f"{move} is not VALID. {self.current_color} King in CHECK!")
                     is_valid_move = False
                     break
 
             self.undo_move()
             if is_valid_move:
                 valid_moves.append(move)
+
+        # No possible moves :( Either checkmate or stalemate
+        if len(possible_moves) == 0:
+            if self.in_check():
+                self.checkmate = True
+            else:
+                self.stalemate = True
 
         return valid_moves
 

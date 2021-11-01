@@ -143,7 +143,6 @@ class Bishop(Piece):
 
                 if 0 <= row_advancement <= 7 and 0 <= col_advancement <= 7:
                     piece = board[row_advancement][col_advancement]
-
                     if isinstance(piece, Piece) and piece.color == self.color:
                         break
                     elif piece == EMPTY_SQUARE:
@@ -153,6 +152,7 @@ class Bishop(Piece):
                         moves.append(move)
                     else:
                         self.capture(board=board, piece_to_capture=piece, moves=moves)
+                        break
         return moves
 
 
@@ -233,6 +233,7 @@ class Rook(Piece):
                     # Capture enemy piece!
                     else:
                         self.capture(board=board, piece_to_capture=piece, moves=moves)
+                        break
         return moves
 
 

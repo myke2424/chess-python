@@ -46,8 +46,6 @@ class Game:
             self.gui.draw()
             pygame.display.flip()
 
-        logger.debug("Game ended")
-
 
 def main():
     chess_game = Game()
