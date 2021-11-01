@@ -28,4 +28,4 @@ class ChessNotationParser:
     def from_notation(cls, notation: str) -> tuple:
         """ Given a chess notation, return row/col on the board """
         file, rank = notation[0], notation[1]
-        return Square(cls.files_to_columns(file), cls.ranks_to_rows(rank))
+        return Square(cls.files_to_columns[file], cls.ranks_to_rows[rank])
