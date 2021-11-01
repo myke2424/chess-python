@@ -58,6 +58,15 @@ class Move:
         return False
 
     @classmethod
-    def from_chess_notation(cls, starting_square: str, destination_square: str, board: Board) -> "Move":
-        """ Alternate constructor to create a move obj from standard chess notation """
-        pass
+    def from_chess_notation(cls, notation: str, board: Board) -> "Move":
+        """
+        Alternate constructor to create a move obj from standard chess notation
+        Notation e.g. (e4->e6)
+         """
+        notation.split('->')
+        start_notation, dest_notation = notation[0], notation[1]
+
+        start_square = ChessNotationParser.from_notation(start_notation)
+        dest_square = ChessNotationParser.from_notation(dest_notation)
+
+        return cls(start_square=start_square, dest_square=dest_square, board=board)
