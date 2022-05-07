@@ -1,4 +1,4 @@
-from piece import Bishop, King, Knight, Pawn, Queen, Rook
+from .piece import Bishop, King, Knight, Pawn, Queen, Rook
 
 BLACKS_STARTING_KINGS_ROW = [
     Rook(color="b", row=0, col=0),

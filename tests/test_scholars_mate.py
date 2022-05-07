@@ -1,7 +1,7 @@
 import pytest
 
-from ..state import GameState
-from ..move import Move
+from chess.state import GameState
+from chess.move import Move
 
 
 def test_scholars_mate() -> None:
@@ -12,4 +12,4 @@ def test_scholars_mate() -> None:
     for move in moves:
         game_state.make_move(move)
 
-    assert game_state.checkmate is True
+    assert game_state.checkmate

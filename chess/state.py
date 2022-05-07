@@ -7,10 +7,10 @@ from typing import List
 from functools import reduce
 from itertools import chain
 
-from piece import Piece, King
-from move import Move
-from utils import EMPTY_SQUARE, Board, Color, Square
-from starting_pieces import (
+from .piece import Piece, King
+from .move import Move
+from .utils import EMPTY_SQUARE, Board, Color, Square
+from .starting_pieces import (
     BLACKS_STARTING_KINGS_ROW,
     BLACKS_STARTING_PAWN_ROW,
     WHITES_STARTING_KINGS_ROW,

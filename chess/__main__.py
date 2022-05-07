@@ -1,10 +1,10 @@
 import logging
 
 import pygame
-from event_handler import EventHandler
-from gui import GUI
-from settings import Settings
-from state import GameState
+from .event_handler import EventHandler
+from .gui import GUI
+from .settings import Settings
+from .state import GameState
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

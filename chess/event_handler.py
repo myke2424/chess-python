@@ -1,9 +1,9 @@
 import logging
 
-from chess_notation import ChessNotationParser
-from move import Move
-from state import GameState
-from utils import EMPTY_SQUARE, Square
+from .chess_notation import ChessNotationParser
+from .move import Move
+from .state import GameState
+from .utils import EMPTY_SQUARE, Square
 
 logger = logging.getLogger(__name__)
 

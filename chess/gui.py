@@ -3,8 +3,8 @@ import os
 import sys
 
 import pygame
-from settings import Settings
-from utils import EMPTY_SQUARE, Board
+from .settings import Settings
+from .utils import EMPTY_SQUARE, Board
 
 logger = logging.getLogger(__name__)
 

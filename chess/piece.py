@@ -5,9 +5,9 @@ from copy import deepcopy
 from typing import List
 from collections import namedtuple
 
-from chess_notation import ChessNotationParser
-from move import Move
-from utils import EMPTY_SQUARE, Board, Color, Square
+from .chess_notation import ChessNotationParser
+from .move import Move
+from .utils import EMPTY_SQUARE, Board, Color, Square
 
 logger = logging.getLogger(__name__)
 

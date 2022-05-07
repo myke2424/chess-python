@@ -1,7 +1,7 @@
 import logging
 
-from chess_notation import ChessNotationParser
-from utils import Board, Color, Square
+from .chess_notation import ChessNotationParser
+from .utils import Board, Color, Square
 
 logger = logging.getLogger(__name__)
 
